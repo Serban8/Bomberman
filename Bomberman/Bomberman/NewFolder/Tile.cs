@@ -14,6 +14,13 @@ namespace Bomberman.NewFolder
     internal class Tile
     {
         private Texture2D texture;
+        public Texture2D Texture
+        {
+            get
+            {
+                return texture;
+            }
+        }
         public Vector2 Position { get; set; }
         public TileType Type { get; set; }
         public Tile(Texture2D tileTexture, Vector2 tilePosition, TileType tileType)
@@ -21,10 +28,20 @@ namespace Bomberman.NewFolder
             texture = tileTexture;
             Position = tilePosition;
             Type = tileType;
-        } 
+        }
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, Position, Color.White);
+            //spriteBatch.Draw(
+            //             texture,
+            //             Position,
+            //             null,
+            //             Color.White,
+            //             0f,
+            //             new Vector2(texture.Width / 2, texture.Height / 2),
+            //             Vector2.One,
+            //             SpriteEffects.None,
+            //             0f);
         }
         public void Destroy()
         {
