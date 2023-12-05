@@ -42,7 +42,7 @@ namespace Bomberman.BombermanClasses
             set { _speed = value; }
         }
 
-        private Vector2 _position;
+        protected Vector2 _position;
         public Vector2 Position
         {
             get { return _position; }
@@ -62,7 +62,7 @@ namespace Bomberman.BombermanClasses
             Speed = speed;
             Boundaries = boundaries;
         }
-        public void Update(GameTime gameTime)
+        public virtual void  Update(GameTime gameTime)
         {
             HandleInput(gameTime);
             Move();

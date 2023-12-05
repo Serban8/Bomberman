@@ -16,6 +16,8 @@ namespace Bomberman
 
         private Player _player;
         private TileMap _tileMap;
+        private Enemy _enemy;
+
 
         private readonly int _windowBorderSize;
 
@@ -66,6 +68,7 @@ namespace Bomberman
                 Exit();
 
             _player.Update(gameTime);
+            _enemy.Update(gameTime);    
 
             base.Update(gameTime);
         }
@@ -81,7 +84,7 @@ namespace Bomberman
             _tileMap.Draw(_spriteBatch);
 
             _player.Draw(_spriteBatch);
-
+            _enemy.Draw(_spriteBatch);  
             _spriteBatch.End();
             base.Draw(gameTime);
         }
