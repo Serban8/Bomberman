@@ -1,4 +1,4 @@
-﻿using Bomberman.NewFolder;
+﻿using Bomberman.BombermanClasses;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,11 +15,8 @@ namespace Bomberman
         private Texture2D _backgroundTexture;
 
         private Player _player;
+        private TileMap _tileMap;
 
-        private Tile[,] _tiles;
-        private Point _tilesSize;
-        private readonly int _tileBorderSize = 5;
-        private Texture2D _tileTexture;
         private readonly int _windowBorderSize;
 
         public Bomberman()
@@ -44,15 +41,6 @@ namespace Bomberman
             _graphics.PreferredBackBufferWidth = (int)_windowSize.X;
             _graphics.PreferredBackBufferHeight = (int)_windowSize.Y;
             _graphics.ApplyChanges();
-            
-            //load the tile texture
-            _tileTexture = Content.Load<Texture2D>("Paths/path-small-rounded-v2");
-
-            //calculate the number of tiles that can fit in the window taking the border into account
-            int tilesWidth = (int)((_windowSize.X - 2 * _windowBorderSize) / (_tileTexture.Width + _tileBorderSize));
-            int tilesHeight = (int)((_windowSize.Y - 2 * _windowBorderSize) / (_tileTexture.Height + _tileBorderSize));
-            _tilesSize = new Point(tilesWidth, tilesHeight);
-            _tiles = new Tile[tilesWidth, tilesHeight];
 
             base.Initialize();
         }
@@ -64,25 +52,12 @@ namespace Bomberman
             //load the background texture
             _backgroundTexture = Content.Load<Texture2D>("Backgrounds/DarkGrayWithStars");
 
-            int posX = _windowBorderSize;
-            int posY = _windowBorderSize;
-            for (int x = 0; x < _tilesSize.X; x++)
-            {
-                for (int y = 0; y < _tilesSize.Y; y++)
-                {
-                    _tiles[x, y] = new Tile(_tileTexture, new Vector2(posX, posY), TileType.Path);
-                    posY += _tileTexture.Height + _tileBorderSize;
-                }
-                posX += _tileTexture.Width + _tileBorderSize;
-                posY = _windowBorderSize;
-            }
+            _tileMap = new TileMap(Content, _windowSize, _windowBorderSize);
 
             _player = new Player(Content.Load<Texture2D>("Sprites/player"),
                       new Vector2(_windowBorderSize, _windowBorderSize),
                       200f,
-                      (_tiles[0, 0].Position, 
-                        new Vector2(_tiles[_tilesSize.X - 1, _tilesSize.Y - 1].Position.X + _tileTexture.Width, 
-                                   _tiles[_tilesSize.X - 1, _tilesSize.Y - 1].Position.Y + _tileTexture.Height)));
+                      _tileMap.GetPlayerBoundries());
         }
 
         protected override void Update(GameTime gameTime)
@@ -103,13 +78,7 @@ namespace Bomberman
 
             _spriteBatch.Draw(_backgroundTexture, Vector2.Zero, Color.White);
 
-            for (int i = 0; i < _tilesSize.X; i++)
-            {
-                for (int j = 0; j < _tilesSize.Y; j++)
-                {
-                    _tiles[i, j].Draw(_spriteBatch);
-                }
-            }
+            _tileMap.Draw(_spriteBatch);
 
             _player.Draw(_spriteBatch);
 

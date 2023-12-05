@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace Bomberman.NewFolder
+namespace Bomberman.BombermanClasses
 {
     public enum TileType
     {

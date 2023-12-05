@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bomberman.NewFolder
+namespace Bomberman.BombermanClasses
 {
     internal class Player
     {
