@@ -60,6 +60,10 @@ namespace Bomberman
                       new Vector2(_windowBorderSize, _windowBorderSize),
                       200f,
                       _tileMap.GetPlayerBoundries());
+            _enemy = new Enemy(Content.Load<Texture2D>("Sprites/enemy2"),
+                      new Vector2(_windowBorderSize, _windowBorderSize),
+                      200f,
+                      _tileMap.GetPlayerBoundries(),2);
         }
 
         protected override void Update(GameTime gameTime)
