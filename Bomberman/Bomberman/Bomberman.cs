@@ -1,7 +1,8 @@
-﻿using Bomberman.BombermanClasses;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using BombermanBase;
+using BombermanMONO.LogicExtensions;
 
 namespace Bomberman
 {
@@ -14,9 +15,9 @@ namespace Bomberman
 
         private Texture2D _backgroundTexture;
 
-        private Player _player;
-        private TileMap _tileMap;
-        private Enemy _enemy;
+        private BombermanBase.Player _player;
+        private BombermanBase.TileMap _tileMap;
+        private BombermanBase.Enemy _enemy;
 
 
         private readonly int _windowBorderSize;
@@ -44,6 +45,8 @@ namespace Bomberman
             _graphics.PreferredBackBufferHeight = (int)_windowSize.Y;
             _graphics.ApplyChanges();
 
+            TileMapExtensions.WindowBorderSize = _windowBorderSize;
+
             base.Initialize();
         }
 
@@ -54,16 +57,14 @@ namespace Bomberman
             //load the background texture
             _backgroundTexture = Content.Load<Texture2D>("Backgrounds/DarkGrayWithStars");
 
-            _tileMap = new TileMap(Content, _windowSize, _windowBorderSize);
+            TileExtensions.pathTexture = Content.Load<Texture2D>("Paths/path-small-rounded-v2");
+            _tileMap = TileMapExtensions.CreateMap(_windowBorderSize, _windowSize);
 
-            _player = new Player(Content.Load<Texture2D>("Sprites/player"),
-                      new Vector2(_windowBorderSize, _windowBorderSize),
-                      200f,
-                      _tileMap.GetPlayerBoundries());
-            _enemy = new Enemy(Content.Load<Texture2D>("Sprites/enemy2"),
-                      new Vector2(_windowBorderSize, _windowBorderSize),
-                      200f,
-                      _tileMap.GetPlayerBoundries(),2);
+            PlayerExtensions.playerTexture = Content.Load<Texture2D>("Sprites/player");
+            _player = new BombermanBase.Player("bro", 4, 3, (0, 0));
+
+            EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
+            _enemy = new BombermanBase.Enemy("abc", 4, 1, (0,0), 2);
         }
 
         protected override void Update(GameTime gameTime)
@@ -71,8 +72,10 @@ namespace Bomberman
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _player.Update(gameTime);
-            _enemy.Update(gameTime);    
+
+            _player.Update();
+
+            _enemy.Update();    
 
             base.Update(gameTime);
         }
@@ -82,13 +85,15 @@ namespace Bomberman
             GraphicsDevice.Clear(new Color(25, 25, 25));
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-
             _spriteBatch.Draw(_backgroundTexture, Vector2.Zero, Color.White);
 
             _tileMap.Draw(_spriteBatch);
 
-            _player.Draw(_spriteBatch);
-            _enemy.Draw(_spriteBatch);  
+            var screenCoords = _player.GetScreenCoords();
+            PlayerExtensions.Draw(screenCoords, _spriteBatch);
+            var screenCoordsEnemy = _enemy.GetScreenCoords();
+            EnemyExtensions.Draw(screenCoordsEnemy, _spriteBatch);  
+            
             _spriteBatch.End();
             base.Draw(gameTime);
         }
