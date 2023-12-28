@@ -13,6 +13,7 @@ namespace BombermanMONO.LogicExtensions
         public static Texture2D pathTexture;
         public static Texture2D unbreakableWallTexture;
         public static Texture2D breakableWallTexture;
+        public static Texture2D pathWithBombTexture;
 
         public static void Draw(this BombermanBase.Tile tile, SpriteBatch spriteBatch)
         {
@@ -28,6 +29,10 @@ namespace BombermanMONO.LogicExtensions
             else if (tile.Type == BombermanBase.TileType.BreakableWall)
             {
                 spriteBatch.Draw(breakableWallTexture, new Vector2(screenPosition.x, screenPosition.y), Color.White);
+            }
+            else if (tile.Type == BombermanBase.TileType.PathWithBomb)
+            {
+                spriteBatch.Draw(pathWithBombTexture, new Vector2(screenPosition.x, screenPosition.y), Color.White);
             }
         }
 

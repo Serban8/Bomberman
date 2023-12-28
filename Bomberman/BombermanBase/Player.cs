@@ -72,6 +72,14 @@ namespace BombermanBase
             Position = position;
             MoveStrategy = moveStrategy;
         }
+        public void RemoveBomb()
+        {
+            NoOfBombs--;
+        }
+        public void AddBomb()
+        {
+            NoOfBombs++;
+        }
 
         public void SetMoveStrategy(IMoveStrategy moveStrategy)
         {

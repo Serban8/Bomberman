@@ -32,6 +32,11 @@ namespace BombermanBase
         {
             Type = TileType.PathWithBomb;
         }
+        public void Explode(Player player)
+        {
+            Type = TileType.Path;
+            player.AddBomb();
+        }
 
         public bool IsWalkable()
         {

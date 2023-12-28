@@ -2,7 +2,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
+
 
 namespace BombermanMONO.LogicExtensions
 {
@@ -10,6 +13,7 @@ namespace BombermanMONO.LogicExtensions
     {
         public static Texture2D playerTexture;
         public static SpriteEffects effects;
+        private static Timer bombTimer;
         public static void Draw(Vector2 screenCoords, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(playerTexture, screenCoords, null, Color.White, 0f, Vector2.Zero, 1f, effects, 0);
@@ -52,6 +56,19 @@ namespace BombermanMONO.LogicExtensions
             {
                 player.Move(tileMap, 0, 1);
                 updated = true;
+            }
+            else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Space))
+            {
+                if(player.NoOfBombs>0)
+                {
+                    Tile currentTile = tileMap.GetTile(player.Position);
+                    currentTile.AddBomb();
+                    player.RemoveBomb();
+                    bombTimer = new Timer(5000);
+                    bombTimer.Elapsed += (sender, e) => currentTile.Explode(player);
+                    bombTimer.AutoReset = false;
+                    bombTimer.Start();
+                }
             }
 
             if (!updated)
