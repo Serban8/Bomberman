@@ -32,5 +32,10 @@ namespace BombermanBase
         {
             Type = TileType.PathWithBomb;
         }
+
+        public bool IsWalkable()
+        {
+            return Type == TileType.Path || Type == TileType.PathWithBomb;
+        }
     }
 }

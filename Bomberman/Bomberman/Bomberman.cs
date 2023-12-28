@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using BombermanBase;
 using BombermanMONO.LogicExtensions;
+using System.Timers;
 
 namespace Bomberman
 {
@@ -17,10 +18,12 @@ namespace Bomberman
 
         private BombermanBase.Player _player;
         private BombermanBase.TileMap _tileMap;
-        private BombermanBase.Enemy _enemy;
+        private BombermanBase.Player _enemy;
 
 
         private readonly int _windowBorderSize;
+        Timer aTimer = new System.Timers.Timer(1000);
+
 
         public Bomberman()
         {
@@ -61,10 +64,15 @@ namespace Bomberman
             _tileMap = TileMapExtensions.CreateMap(_windowBorderSize, _windowSize);
 
             PlayerExtensions.playerTexture = Content.Load<Texture2D>("Sprites/player");
-            _player = new BombermanBase.Player("bro", 4, 3, (0, 0));
+            _player = new BombermanBase.Player("bro", 4, 3, (0, 0), new PlayerMoveStrategy());
 
             EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
-            _enemy = new BombermanBase.Enemy("abc", 4, 1, (0,0), 2);
+            _enemy = new BombermanBase.Player("abc", 4, 1, (0,0), new AIMoveStrategy());
+
+            // Hook up the Elapsed event for the timer. 
+            aTimer.Elapsed += (sender, e) => _enemy.Update(_tileMap);
+            aTimer.AutoReset = true;
+            aTimer.Enabled = true;
         }
 
         protected override void Update(GameTime gameTime)
@@ -73,9 +81,7 @@ namespace Bomberman
                 Exit();
 
 
-            _player.Update();
-
-            _enemy.Update();    
+            _player.Update(_tileMap);
 
             base.Update(gameTime);
         }

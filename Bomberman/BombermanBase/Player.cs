@@ -1,6 +1,8 @@
-﻿using System;
+﻿using BombermanMONO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,17 +62,26 @@ namespace BombermanBase
             }
         }
 
-        public Player(string username, int noOfBombs, int noOfLives, (int, int) position)
+        public IMoveStrategy MoveStrategy;
+
+        public Player(string username, int noOfBombs, int noOfLives, (int, int) position, IMoveStrategy moveStrategy)
         {
             Username = username;
             NoOfBombs = noOfBombs;
             NoOfLives = noOfLives;
             Position = position;
+            MoveStrategy = moveStrategy;
         }
 
-        public void Move(int x, int y)
+        public void SetMoveStrategy(IMoveStrategy moveStrategy)
         {
-            Position = (Position.X + x, Position.Y + y);
+            MoveStrategy = moveStrategy;
+        }
+
+        public void Move(TileMap tileMap, int x = 0, int y = 0)
+        {
+            Position = MoveStrategy.Move(tileMap, Position, x, y);
+           // Logger.Log("Next pos for " + Username + ": " + Position.ToString());
         }
     }
 }

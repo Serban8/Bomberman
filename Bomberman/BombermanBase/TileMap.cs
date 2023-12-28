@@ -27,6 +27,13 @@ namespace BombermanBase
             LoadMap();
         }
 
+        public Tile GetTile((int X, int Y) pos)
+        {
+            if (pos.X < 0 || pos.Y < 0 || pos.X > MapSize.Width || pos.Y > MapSize.Height)
+                throw new ArgumentException();
+            return Tiles[pos.X, pos.Y];
+        }
+
         private void LoadMap()
         {
             Tiles = new Tile[_mapSize.Width, _mapSize.Height];

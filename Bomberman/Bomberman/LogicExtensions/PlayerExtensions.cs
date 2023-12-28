@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Timers;
 
 namespace BombermanMONO.LogicExtensions
 {
@@ -21,39 +22,44 @@ namespace BombermanMONO.LogicExtensions
             return new Vector2((player.Position.X * tileTextureSize.X ) + borderSize, (player.Position.Y * tileTextureSize.Y) + borderSize);
         }
 
-        public static void Update(this BombermanBase.Player player)
+        public static void Update(this BombermanBase.Player player, TileMap tileMap)
         {
             BombermanMONO.Keyboard.GetState();
 
+            bool updated = false;
             if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Left))
             {
-                int newX = player.Position.X - 1;
-                int newY = player.Position.Y;
-                player.Position = (newX, newY);
+                player.Move(tileMap, -1, 0);
+                updated = true;
 
                 PlayerExtensions.effects = SpriteEffects.FlipHorizontally;
             }
             else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Right))
             {
-                int newX = player.Position.X + 1;
-                int newY = player.Position.Y;
-                player.Position = (newX, newY);
+                player.Move(tileMap, 1, 0);
+                updated = true;
 
                 PlayerExtensions.effects = SpriteEffects.None;
             }
 
             if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Up))
             {
-                int newX = player.Position.X;
-                int newY = player.Position.Y - 1;
-                player.Position = (newX, newY);
+                player.Move(tileMap, 0, -1);
+                updated = true;
+
             }
             else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Down))
             {
-                int newX = player.Position.X;
-                int newY = player.Position.Y + 1;
-                player.Position = (newX, newY);
+                player.Move(tileMap, 0, 1);
+                updated = true;
             }
+
+            if (!updated)
+            {
+                player.Move(tileMap);
+            }
+
+
         }
 
     }

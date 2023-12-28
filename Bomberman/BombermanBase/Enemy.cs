@@ -10,8 +10,8 @@ namespace BombermanBase
     {
         private float movementTimer;
         private float movementInterval;
-        public Enemy(string username, int noOfBombs, int noOfLives, (int, int) position, float movementInterval) 
-            : base(username, noOfBombs, noOfLives, position)
+        public Enemy(string username, int noOfBombs, int noOfLives, (int, int) position, float movementInterval, IMoveStrategy ms) 
+            : base(username, noOfBombs, noOfLives, position, ms)
         {
             this.movementInterval = movementInterval;
             movementTimer = movementInterval;

@@ -41,10 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIMoveStrategy.cs" />
     <Compile Include="Bomberman.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="IBomberman.cs" />
+    <Compile Include="IMoveStrategy.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerMoveStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileMap.cs" />
