@@ -61,6 +61,9 @@ namespace Bomberman
             _backgroundTexture = Content.Load<Texture2D>("Backgrounds/DarkGrayWithStars");
 
             TileExtensions.pathTexture = Content.Load<Texture2D>("Paths/path-small-rounded-v2");
+            TileExtensions.unbreakableWallTexture = Content.Load<Texture2D>("Paths/wall");
+            TileExtensions.breakableWallTexture = Content.Load<Texture2D>("Paths/breakablewall");
+
             _tileMap = TileMapExtensions.CreateMap(_windowBorderSize, _windowSize);
 
             PlayerExtensions.playerTexture = Content.Load<Texture2D>("Sprites/player");
