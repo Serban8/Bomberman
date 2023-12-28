@@ -35,8 +35,8 @@ namespace BombermanBase
         public void Explode(Player player, TileMap tileMap)
         {
             Type = TileType.Path;
-            int[] rowOffsets = {-2, -1, 0, 0, 1, 2};
-            int[] colOffsets = { 0, -1, -2, 2, 1, 0 };
+            int[] rowOffsets = { -1, 1, 0, 0, -2, 2, 0, 0 };
+            int[] colOffsets = { 0, 0, -1, 1, 0, 0, -2, 2 };
             for (int i = 0; i < rowOffsets.Length; i++)
             {
                 int newRow = Position.X + rowOffsets[i];
@@ -49,6 +49,7 @@ namespace BombermanBase
                     }
                 }
             }
+            
             player.AddBomb();
         }
 
