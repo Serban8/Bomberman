@@ -65,7 +65,7 @@ namespace BombermanMONO.LogicExtensions
                     currentTile.AddBomb();
                     player.RemoveBomb();
                     bombTimer = new Timer(5000);
-                    bombTimer.Elapsed += (sender, e) => currentTile.Explode(player);
+                    bombTimer.Elapsed += (sender, e) => currentTile.Explode(player,tileMap);
                     bombTimer.AutoReset = false;
                     bombTimer.Start();
                 }

@@ -32,9 +32,23 @@ namespace BombermanBase
         {
             Type = TileType.PathWithBomb;
         }
-        public void Explode(Player player)
+        public void Explode(Player player, TileMap tileMap)
         {
             Type = TileType.Path;
+            int[] rowOffsets = {-2, -1, 0, 0, 1, 2};
+            int[] colOffsets = { 0, -1, -2, 2, 1, 0 };
+            for (int i = 0; i < rowOffsets.Length; i++)
+            {
+                int newRow = Position.X + rowOffsets[i];
+                int newCol = Position.Y + colOffsets[i];
+                if(newRow > 0 && newRow < tileMap.MapSize.Width && newCol > 0 && newCol< tileMap.MapSize.Height)
+                {
+                    if (tileMap.Tiles[newRow,newCol].Type == TileType.BreakableWall)
+                    {
+                        tileMap.Tiles[newRow, newCol].Type=TileType.Path;
+                    }
+                }
+            }
             player.AddBomb();
         }
 
