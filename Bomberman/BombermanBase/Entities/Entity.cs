@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BombermanBase
 {
-    public class Player
+    public class Entity
     {
         private string _username;
         public string Username
@@ -64,7 +64,7 @@ namespace BombermanBase
 
         public IMoveStrategy MoveStrategy;
 
-        public Player(string username, int noOfBombs, int noOfLives, (int, int) position, IMoveStrategy moveStrategy)
+        public Entity(string username, int noOfBombs, int noOfLives, (int, int) position, IMoveStrategy moveStrategy)
         {
             Username = username;
             NoOfBombs = noOfBombs;

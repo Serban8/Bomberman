@@ -18,7 +18,7 @@ namespace BombermanMONO.LogicExtensions
         {
             spriteBatch.Draw(playerTexture, screenCoords, null, Color.White, 0f, Vector2.Zero, 1f, effects, 0);
         }
-        public static Vector2 GetScreenCoords(this BombermanBase.Player player)
+        public static Vector2 GetScreenCoords(this BombermanBase.Entity player)
         {
             //size of the texture plus the border
             var tileTextureSize = new Vector2(TileExtensions.pathTexture.Width + TileMapExtensions.TileBorderSize, TileExtensions.pathTexture.Height + TileMapExtensions.TileBorderSize);
@@ -26,21 +26,21 @@ namespace BombermanMONO.LogicExtensions
             return new Vector2((player.Position.X * tileTextureSize.X) + borderSize, (player.Position.Y * tileTextureSize.Y) + borderSize);
         }
 
-        public static void Update(this BombermanBase.Player player, TileMap tileMap)
+        public static void Update(this BombermanBase.Entity entity, TileMap tileMap)
         {
             BombermanMONO.Keyboard.GetState();
 
             bool updated = false;
             if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Left))
             {
-                player.Move(tileMap, -1, 0);
+                entity.Move(tileMap, -1, 0);
                 updated = true;
 
                 PlayerExtensions.effects = SpriteEffects.FlipHorizontally;
             }
             else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Right))
             {
-                player.Move(tileMap, 1, 0);
+                entity.Move(tileMap, 1, 0);
                 updated = true;
 
                 PlayerExtensions.effects = SpriteEffects.None;
@@ -48,25 +48,24 @@ namespace BombermanMONO.LogicExtensions
 
             if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Up))
             {
-                player.Move(tileMap, 0, -1);
+                entity.Move(tileMap, 0, -1);
                 updated = true;
 
             }
             else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Down))
             {
-                player.Move(tileMap, 0, 1);
+                entity.Move(tileMap, 0, 1);
                 updated = true;
             }
             else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Space))
             {
-                tileMap.PlaceBomb(player);
+                tileMap.PlaceBomb(entity);
             }
 
             if (!updated)
             {
-                player.Move(tileMap);
+                entity.Move(tileMap);
             }
-
 
         }
 

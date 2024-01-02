@@ -16,9 +16,9 @@ namespace Bomberman
 
         private Texture2D _backgroundTexture;
 
-        private BombermanBase.Player _player;
+        private BombermanBase.Entity _player;
         private BombermanBase.TileMap _tileMap;
-        private BombermanBase.Player _enemy;
+        private BombermanBase.Entity _enemy;
 
 
         private readonly int _windowBorderSize;
@@ -37,6 +37,8 @@ namespace Bomberman
 
             _windowSize = new Vector2((float)(0.8 * screenWidth + 0.5), (float)(0.8 * screenHeight + 0.5));
             _windowBorderSize = (int)(0.05 * screenWidth + 0.5);
+
+            TileMapExtensions.WindowBorderSize = _windowBorderSize;
             //
         }
 
@@ -47,8 +49,6 @@ namespace Bomberman
             _graphics.PreferredBackBufferWidth = (int)_windowSize.X;
             _graphics.PreferredBackBufferHeight = (int)_windowSize.Y;
             _graphics.ApplyChanges();
-
-            TileMapExtensions.WindowBorderSize = _windowBorderSize;
 
             base.Initialize();
         }
@@ -68,10 +68,10 @@ namespace Bomberman
             _tileMap = TileMapExtensions.CreateMap(_windowBorderSize, _windowSize);
 
             PlayerExtensions.playerTexture = Content.Load<Texture2D>("Sprites/player");
-            _player = new BombermanBase.Player("bro", 4, 3, (0, 0), new PlayerMoveStrategy());
+            _player = new BombermanBase.PlayerFactory().CreateEntity("abc", 1, 1);
 
             EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
-            _enemy = new BombermanBase.Player("abc", 4, 1, (0,0), new AIMoveStrategy());
+            _enemy = new BombermanBase.EnemyFactory().CreateEntity("abc", 4, 1);
 
             // Hook up the Elapsed event for the timer. 
             aTimer.Elapsed += (sender, e) => _enemy.Update(_tileMap);

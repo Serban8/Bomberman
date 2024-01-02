@@ -38,7 +38,7 @@ namespace BombermanBase
             return Tiles[pos.X, pos.Y];
         }
 
-        public void PlaceBomb(Player player)
+        public void PlaceBomb(Entity player)
         {
             if (player.NoOfBombs > 0)
             {
@@ -105,7 +105,7 @@ namespace BombermanBase
                     }
                 }
             }
-            Console.WriteLine("Map loaded " + _mapSize.Width.ToString() + " " + _mapSize.Height.ToString());
+            //Console.WriteLine("Map loaded " + _mapSize.Width.ToString() + " " + _mapSize.Height.ToString());
         }
     }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BombermanBase
 {
-    public interface IBomberman
+    public interface IEntityFactory
     {
-        void CreateGame(TileMap tileMap);
+        Entity CreateEntity(string username, int noOfBombs, int noOfLifes);
     }
 }

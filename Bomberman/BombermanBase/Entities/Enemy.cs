@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BombermanBase
 {
-    public class Enemy : Player
+    public class Enemy : Entity
     {
         private float movementTimer;
         private float movementInterval;
