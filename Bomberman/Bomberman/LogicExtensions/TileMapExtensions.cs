@@ -25,10 +25,10 @@ namespace BombermanMONO.LogicExtensions
             }
         }
 
-        public static BombermanBase.TileMap CreateMap(int windowBorderSize, Vector2 windowSize)
+        public static BombermanBase.TileMap CreateMap(int windowBorderSize, Vector2 windowSize, string mapFilePath)
         {
             (int tilesWidth, int tilesHeight) size = CalculateMapSize(windowBorderSize, windowSize);
-            return new BombermanBase.TileMap(size);
+            return new BombermanBase.TileMap(size, mapFilePath);
         }
 
         private static (int, int) CalculateMapSize(int windowBorderSize, Vector2 windowSize)

@@ -25,10 +25,11 @@ namespace BombermanBase
 
         private static Timer bombTimer;
 
-        public TileMap((int Width, int Height) mapSize)
+        public TileMap((int Width, int Height) mapSize, string mapFilePath)
         {
             _mapSize = mapSize;
-            LoadMap("C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
+            _tiles = new Tile[mapSize.Width, mapSize.Height];
+            LoadMap(mapFilePath);
         }
 
         public Tile GetTile((int X, int Y) pos)
@@ -75,16 +76,23 @@ namespace BombermanBase
             }
         }
 
-        private void LoadMap(string filemap)
+        public void LoadMap(string mapFilePath)
         {
-            Tiles = new Tile[_mapSize.Width, _mapSize.Height];
-            string[] lines = File.ReadAllLines(filemap);
+            string[] lines = File.ReadAllLines(mapFilePath);
+            
+            int width = MapSize.Width;
+            int height = MapSize.Height;
+            if (width == 0 || height == 0)
+            {
+                width = lines[0].Length;
+                height = lines.Length;
+            }
 
-            for (int y = 0; y < _mapSize.Height; y++)
+            for (int y = 0; y < height; y++)
             {
                 string line = lines[y].ToString();
 
-                for (int x = 0; x < _mapSize.Width; x++)
+                for (int x = 0; x < width; x++)
                 {
                     if (line[x].ToString() == "p")
                     {
@@ -105,7 +113,8 @@ namespace BombermanBase
                     }
                 }
             }
-            //Console.WriteLine("Map loaded " + _mapSize.Width.ToString() + " " + _mapSize.Height.ToString());
+
+            Console.WriteLine("Map loaded " + MapSize.Width.ToString() + " " + MapSize.Height.ToString());
         }
     }
 }

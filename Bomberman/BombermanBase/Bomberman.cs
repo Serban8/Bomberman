@@ -31,9 +31,16 @@ namespace BombermanBase
     {
         private readonly List<IObserver<Bomberman>> _observers;
 
-        private BombermanBase.TileMap _tileMap;
-        private BombermanBase.Entity _player;
-        private BombermanBase.Entity _enemy;
+        private List<TileMap> _levels;
+
+        private TileMap _crtLevel;
+        public TileMap CrtLevel { get => _crtLevel; }
+        
+        private Entity _player;
+        public Entity Player { get => _player; }
+        private Entity _enemy;
+        private List<Entity> _enemies;
+        public List<Entity> Enemies { get => _enemies; }
 
 
         Timer enemyMoveTimer = new System.Timers.Timer(800);
@@ -43,13 +50,38 @@ namespace BombermanBase
             _observers = new List<IObserver<Bomberman>>();
         }
 
-        public void CreateGame(TileMap tileMap)
+        public void CreateGame()
         {
-            _player = new BombermanBase.PlayerFactory().CreateEntity("abc", 1, 1);
-            _enemy = new BombermanBase.EnemyFactory().CreateEntity("abc", 4, 1);
-            _tileMap = tileMap;
+            _player = new PlayerFactory().CreateEntity("player");
+            _enemies = new List<Entity>() { new EnemyFactory().CreateEntity("enemy1"), new EnemyFactory().CreateEntity("enemy2") };
+            _levels = new List<TileMap>();
+        }
 
-            enemyMoveTimer.Elapsed += (sender, e) => { _enemy.Move(_tileMap); NotifyMoveMade(); };
+        public void AddLevel(TileMap tileMap)
+        {
+            _levels.Add(tileMap);
+
+            if (_levels.Count == 1)
+            {
+                LoadLevel(0);
+            }
+        }
+
+        public void LoadLevel(int levelNo)
+        {
+            if (levelNo < 0 || levelNo >= _levels.Count)
+                throw new ArgumentException();
+
+            _crtLevel = _levels[levelNo];
+
+            enemyMoveTimer.Elapsed += (sender, e) => 
+            {
+                foreach (var enemy in _enemies)
+                {
+                    enemy.Move(_crtLevel); 
+                    NotifyMoveMade();
+                }
+            };
             enemyMoveTimer.AutoReset = true;
             enemyMoveTimer.Enabled = true;
         }
@@ -64,7 +96,7 @@ namespace BombermanBase
 
         public IDisposable Subscribe(IObserver<Bomberman> observer)
         {
-            if(!_observers.Contains(observer))
+            if (!_observers.Contains(observer))
             {
                 _observers.Add(observer);
             }

@@ -8,6 +8,6 @@ namespace BombermanBase
 {
     public interface IBomberman
     {
-        void CreateGame(TileMap tileMap);
+        void CreateGame();
     }
 }

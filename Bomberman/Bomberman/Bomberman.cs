@@ -4,26 +4,27 @@ using Microsoft.Xna.Framework.Input;
 using BombermanBase;
 using BombermanMONO.LogicExtensions;
 using System.Timers;
+using System.Collections.Generic;
+using System;
 
 namespace Bomberman
 {
-    public class Bomberman : Game
+    public class Bomberman : Game, IObserver<BombermanBase.Bomberman>
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
         private readonly Vector2 _windowSize;
-
         private Texture2D _backgroundTexture;
 
-        private BombermanBase.Entity _player;
-        private BombermanBase.TileMap _tileMap;
-        private BombermanBase.Entity _enemy;
-
+        //private BombermanBase.Entity _player;
+        //private BombermanBase.TileMap _tileMap;
+        //private BombermanBase.Entity _enemy;
 
         private readonly int _windowBorderSize;
-        Timer aTimer = new System.Timers.Timer(1000);
+        //Timer aTimer = new System.Timers.Timer(1000);
 
+        BombermanBase.Bomberman _game;
 
         public Bomberman()
         {
@@ -40,6 +41,8 @@ namespace Bomberman
 
             TileMapExtensions.WindowBorderSize = _windowBorderSize;
             //
+
+            _game = new BombermanBase.Bomberman();
         }
 
         protected override void Initialize()
@@ -50,6 +53,8 @@ namespace Bomberman
             _graphics.PreferredBackBufferHeight = (int)_windowSize.Y;
             _graphics.ApplyChanges();
 
+            _game.CreateGame();
+
             base.Initialize();
         }
 
@@ -57,7 +62,6 @@ namespace Bomberman
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //load the background texture
             _backgroundTexture = Content.Load<Texture2D>("Backgrounds/DarkGrayWithStars");
 
             TileExtensions.pathTexture = Content.Load<Texture2D>("Paths/path-small-rounded-v2");
@@ -65,18 +69,27 @@ namespace Bomberman
             TileExtensions.breakableWallTexture = Content.Load<Texture2D>("Paths/breakablewall");
             TileExtensions.pathWithBombTexture = Content.Load<Texture2D>("paths/path-with-bomb");
 
-            _tileMap = TileMapExtensions.CreateMap(_windowBorderSize, _windowSize);
-
             PlayerExtensions.playerTexture = Content.Load<Texture2D>("Sprites/player");
-            _player = new BombermanBase.PlayerFactory().CreateEntity("abc", 1, 1);
 
             EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
-            _enemy = new BombermanBase.EnemyFactory().CreateEntity("abc", 4, 1);
+            LoadLevels();
+        }
 
-            // Hook up the Elapsed event for the timer. 
-            aTimer.Elapsed += (sender, e) => _enemy.Update(_tileMap);
-            aTimer.AutoReset = true;
-            aTimer.Enabled = true;
+        protected void LoadLevels()
+        {
+            List<string> levels = new()
+            { 
+                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
+                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level2.txt" ,
+                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level3.txt" 
+            };
+
+            //load the levels
+            foreach (var levelPath in levels)
+            {
+                var level = TileMapExtensions.CreateMap(_windowBorderSize, _windowSize, levelPath);
+                _game.AddLevel(level);
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -84,8 +97,7 @@ namespace Bomberman
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
-            _player.Update(_tileMap);
+            _game.Player.Update(_game.CrtLevel);
 
             base.Update(gameTime);
         }
@@ -97,15 +109,34 @@ namespace Bomberman
 
             _spriteBatch.Draw(_backgroundTexture, Vector2.Zero, Color.White);
 
-            _tileMap.Draw(_spriteBatch);
+            _game.CrtLevel.Draw(_spriteBatch);
 
-            var screenCoords = _player.GetScreenCoords();
+            var screenCoords = _game.Player.GetScreenCoords();
             PlayerExtensions.Draw(screenCoords, _spriteBatch);
-            var screenCoordsEnemy = _enemy.GetScreenCoords();
-            EnemyExtensions.Draw(screenCoordsEnemy, _spriteBatch);  
+
+            foreach (var enemy in _game.Enemies)
+            {
+                var screenCoordsEnemy = enemy.GetScreenCoords();
+                EnemyExtensions.Draw(screenCoordsEnemy, _spriteBatch);
+            }
             
             _spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnNext(BombermanBase.Bomberman value)
+        {
+            //_game = value;
         }
     }
 }
