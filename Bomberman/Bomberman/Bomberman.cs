@@ -68,7 +68,7 @@ namespace Bomberman
             _tileMap = TileMapExtensions.CreateMap(_windowBorderSize, _windowSize);
 
             PlayerExtensions.playerTexture = Content.Load<Texture2D>("Sprites/player");
-            _player = new BombermanBase.Player("bro", 2, 3, (0, 0), new PlayerMoveStrategy());
+            _player = new BombermanBase.Player("bro", 4, 3, (0, 0), new PlayerMoveStrategy());
 
             EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
             _enemy = new BombermanBase.Player("abc", 4, 1, (0,0), new AIMoveStrategy());

@@ -32,28 +32,28 @@ namespace BombermanBase
                 var mapDimensions = tileMap.MapSize;
 
                 bool xInvalid = false;
-                bool yInvalid = true;
+                bool yInvalid = false;
 
-                int randomX = x;
-                int randomY = y;
+                int randomX = crtPos.X + x;
+                int randomY = crtPos.Y + y;
 
-                if (crtPos.X + x >= mapDimensions.Width)
+                if (randomX >= mapDimensions.Width)
                 {
                     x--;
                     xInvalid = true;
                 }
-                else if (crtPos.X < 0)
+                else if (randomX < 0)
                 {
                     x++;
                     xInvalid = true;
                 }
                 
-                if (crtPos.Y + y >= mapDimensions.Height)
+                if (randomY >= mapDimensions.Height)
                 {
                     y--;
                     yInvalid = true;
                 }
-                else if (crtPos.Y < 0)
+                else if (randomY < 0)
                 {
                     y++;
                     yInvalid = true;
@@ -62,14 +62,11 @@ namespace BombermanBase
                 if (xInvalid && !yInvalid)
                 {
                     x = crtPos.X;
+                    xInvalid = false;
                 }
-                else if (yInvalid && !xInvalid) 
+                
+                if (yInvalid && !xInvalid) 
                 {
-                    y = crtPos.Y;
-                }
-                else
-                {
-                    x = crtPos.X;
                     y = crtPos.Y;
                 }
 

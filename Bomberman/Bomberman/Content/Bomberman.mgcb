@@ -25,6 +25,15 @@
 /processorParam:TextureFormat=Color
 /build:Backgrounds/DarkGrayWithStars.png
 
+#begin Level/Level1.txt
+/copy:Level/Level1.txt
+
+#begin Level/Level2.txt
+/copy:Level/Level2.txt
+
+#begin Level/Level3.txt
+/copy:Level/Level3.txt
+
 #begin Paths/breakablewall.png
 /importer:TextureImporter
 /processor:TextureProcessor

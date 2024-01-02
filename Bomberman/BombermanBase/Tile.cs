@@ -23,7 +23,7 @@ namespace BombermanBase
             Position = tilePosition;
             Type = tileType;
         }
-       
+
         public void Destroy()
         {
             Type = TileType.Path;
@@ -32,25 +32,12 @@ namespace BombermanBase
         {
             Type = TileType.PathWithBomb;
         }
-        public void Explode(Player player, TileMap tileMap)
+        //public void Explode(Player player)
+        public void Explode()
         {
             Type = TileType.Path;
-            int[] rowOffsets = { -1, 1, 0, 0, -2, 2, 0, 0 };
-            int[] colOffsets = { 0, 0, -1, 1, 0, 0, -2, 2 };
-            for (int i = 0; i < rowOffsets.Length; i++)
-            {
-                int newRow = Position.X + rowOffsets[i];
-                int newCol = Position.Y + colOffsets[i];
-                if(newRow > 0 && newRow < tileMap.MapSize.Width && newCol > 0 && newCol< tileMap.MapSize.Height)
-                {
-                    if (tileMap.Tiles[newRow,newCol].Type == TileType.BreakableWall)
-                    {
-                        tileMap.Tiles[newRow, newCol].Type=TileType.Path;
-                    }
-                }
-            }
-            
-            player.AddBomb();
+
+            //player.AddBomb();
         }
 
         public bool IsWalkable()
