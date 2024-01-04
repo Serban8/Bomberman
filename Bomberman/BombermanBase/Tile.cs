@@ -6,49 +6,41 @@ using System.Threading.Tasks;
 
 namespace BombermanBase
 {
-    public enum TileType
+    internal class Tile : ITile
     {
-        Path,
-        UnbreakableWall,
-        BreakableWall,
-        PathWithBomb
-    }
-
-    public class Tile
-    {
-        public (int X, int Y) Position { get; set; }
-        public TileType Type { get; set; }
+        public (int X, int Y) Position { get; }
+        private TileType _type;
+        public TileType Type { get => _type; }
         public Tile((int, int) tilePosition, TileType tileType)
         {
             Position = tilePosition;
-            Type = tileType;
+            _type = tileType;
         }
 
         public void Destroy()
         {
-            if(Type == TileType.BreakableWall)
+            if (Type == TileType.BreakableWall)
             {
-                Type = TileType.Path;
+                _type = TileType.Path;
             }
         }
         public void AddBomb()
         {
-            if(Type == TileType.Path)
+            if (Type == TileType.Path)
             {
-                Type = TileType.PathWithBomb;
+                _type = TileType.PathWithBomb;
             }
         }
         //public void Explode(Player player)
         public void Explode()
         {
-            if(Type != TileType.UnbreakableWall)
+            if (Type != TileType.UnbreakableWall)
             {
-                Type = TileType.Path;
+                _type = TileType.Path;
             }
-          
+
             //player.AddBomb();
         }
-
         public bool IsWalkable()
         {
             return Type == TileType.Path || Type == TileType.PathWithBomb;

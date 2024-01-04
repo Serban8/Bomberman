@@ -5,16 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Timer = System.Timers.Timer;
+using BombermanBase.Entities;
 
 namespace BombermanBase
 {
-    public class TileMap
+    public static class TileMapFactory
     {
-        private Tile[,] _tiles;
-        public Tile[,] Tiles
+        public static ITileMap CreateTileMap((int Width, int Height) mapSize, string mapFilePath)
+        {
+            return new TileMap(mapSize, mapFilePath);
+        }
+    }
+    internal class TileMap : ITileMap
+    {
+        private ITile[,] _tiles;
+        public ITile[,] Tiles
         {
             get { return _tiles; }
-            set { _tiles = value; }
         }
 
         private (int Width, int Height) _mapSize;
@@ -32,18 +39,18 @@ namespace BombermanBase
             LoadMap(mapFilePath);
         }
 
-        public Tile GetTile((int X, int Y) pos)
+        public ITile GetTile((int X, int Y) pos)
         {
-            if (pos.X < 0 || pos.Y < 0 || pos.X > MapSize.Width || pos.Y > MapSize.Height)
+            if (pos.X < 0 || pos.Y < 0 || pos.X >= MapSize.Width || pos.Y >= MapSize.Height)
                 throw new ArgumentException();
             return Tiles[pos.X, pos.Y];
         }
 
-        public void PlaceBomb(Entity player)
+        public void PlaceBomb(IEntity player)
         {
             if (player.NoOfBombs > 0)
             {
-                Tile currentTile = GetTile(player.Position);
+                ITile currentTile = GetTile(player.Position);
                 currentTile.AddBomb();
                 player.RemoveBomb();
                 bombTimer = new Timer(5000);
@@ -53,7 +60,7 @@ namespace BombermanBase
             }
         }
 
-        public void Explode(Tile tile)
+        public void Explode(ITile tile)
         {
             (int X, int Y) position = tile.Position;
 
@@ -79,7 +86,7 @@ namespace BombermanBase
         public void LoadMap(string mapFilePath)
         {
             string[] lines = File.ReadAllLines(mapFilePath);
-            
+
             int width = MapSize.Width;
             int height = MapSize.Height;
             if (width == 0 || height == 0)
@@ -114,7 +121,7 @@ namespace BombermanBase
                 }
             }
 
-            Console.WriteLine("Map loaded " + MapSize.Width.ToString() + " " + MapSize.Height.ToString());
+            //Console.WriteLine("Map loaded " + MapSize.Width.ToString() + " " + MapSize.Height.ToString());
         }
     }
 }

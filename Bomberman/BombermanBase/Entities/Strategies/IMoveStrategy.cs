@@ -9,6 +9,6 @@ namespace BombermanBase
 {
     public interface IMoveStrategy
     {
-        (int, int) Move(TileMap tileMap, (int X, int Y) crtPos, int xMove, int yMove);
+        (int, int) Move(ITileMap tileMap, (int X, int Y) crtPos, int xMove, int yMove);
     }
 }

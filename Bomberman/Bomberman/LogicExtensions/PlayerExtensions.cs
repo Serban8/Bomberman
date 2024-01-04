@@ -1,4 +1,5 @@
 ﻿using BombermanBase;
+using BombermanBase.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,12 +14,11 @@ namespace BombermanMONO.LogicExtensions
     {
         public static Texture2D playerTexture;
         public static SpriteEffects effects;
-        private static Timer bombTimer;
         public static void Draw(Vector2 screenCoords, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(playerTexture, screenCoords, null, Color.White, 0f, Vector2.Zero, 1f, effects, 0);
         }
-        public static Vector2 GetScreenCoords(this BombermanBase.Entity player)
+        public static Vector2 GetScreenCoords(this IEntity player)
         {
             //size of the texture plus the border
             var tileTextureSize = new Vector2(TileExtensions.pathTexture.Width + TileMapExtensions.TileBorderSize, TileExtensions.pathTexture.Height + TileMapExtensions.TileBorderSize);
@@ -26,7 +26,7 @@ namespace BombermanMONO.LogicExtensions
             return new Vector2((player.Position.X * tileTextureSize.X) + borderSize, (player.Position.Y * tileTextureSize.Y) + borderSize);
         }
 
-        public static void Update(this BombermanBase.Entity entity, TileMap tileMap)
+        public static void Update(this IEntity entity, ITileMap tileMap)
         {
             BombermanMONO.Keyboard.GetState();
 
@@ -66,7 +66,6 @@ namespace BombermanMONO.LogicExtensions
             {
                 entity.Move(tileMap);
             }
-
         }
 
     }

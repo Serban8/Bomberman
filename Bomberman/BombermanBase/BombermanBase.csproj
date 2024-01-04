@@ -41,13 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Entities\Strategies\AIMoveStrategy.cs" />
     <Compile Include="Bomberman.cs" />
     <Compile Include="Entities\Factories\EnemyFactory.cs" />
-    <Compile Include="IBomberman.cs" />
+    <Compile Include="Interfaces\IBomberman.cs" />
     <Compile Include="Entities\Factories\IEntityFactory.cs" />
     <Compile Include="Entities\Strategies\IMoveStrategy.cs" />
-    <Compile Include="Logger.cs" />
+    <Compile Include="Interfaces\IBombermanObserver.cs" />
+    <Compile Include="Interfaces\ITile.cs" />
+    <Compile Include="Interfaces\ITileMap.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Factories\PlayerFactory.cs" />
     <Compile Include="Entities\Strategies\PlayerMoveStrategy.cs" />

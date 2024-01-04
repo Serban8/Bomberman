@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BombermanBase;
 
 namespace BombermanMONO.LogicExtensions
 {
@@ -15,11 +12,11 @@ namespace BombermanMONO.LogicExtensions
         public static Texture2D breakableWallTexture;
         public static Texture2D pathWithBombTexture;
 
-        public static void Draw(this BombermanBase.Tile tile, SpriteBatch spriteBatch)
+        public static void Draw(this ITile tile, SpriteBatch spriteBatch)
         {
             //List<SpriteEffects> rotation = new List<SpriteEffects>() { SpriteEffects.None, SpriteEffects.FlipHorizontally, SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically };
             (int x, int y) screenPosition = tile.CalculateTileScreenPosition();
-            if (tile.Type == BombermanBase.TileType.Path)
+            if (tile.Type == TileType.Path)
             {
                 //select a random effect from the list
                 //Random rnd = new Random();
@@ -29,21 +26,21 @@ namespace BombermanMONO.LogicExtensions
                 //spriteBatch.Draw(pathTexture, new Vector2(screenPosition.x, screenPosition.y), null, Color.White, 0f, Vector2.Zero, 1f, effect, 0);
                 spriteBatch.Draw(pathTexture, new Vector2(screenPosition.x, screenPosition.y), Color.White);
             }
-            else if (tile.Type == BombermanBase.TileType.UnbreakableWall)
+            else if (tile.Type == TileType.UnbreakableWall)
             {
                 spriteBatch.Draw(unbreakableWallTexture, new Vector2(screenPosition.x, screenPosition.y), Color.White);
             }
-            else if (tile.Type == BombermanBase.TileType.BreakableWall)
+            else if (tile.Type == TileType.BreakableWall)
             {
                 spriteBatch.Draw(breakableWallTexture, new Vector2(screenPosition.x, screenPosition.y), Color.White);
             }
-            else if (tile.Type == BombermanBase.TileType.PathWithBomb)
+            else if (tile.Type == TileType.PathWithBomb)
             {
                 spriteBatch.Draw(pathWithBombTexture, new Vector2(screenPosition.x, screenPosition.y), Color.White);
             }
         }
 
-        private static (int, int) CalculateTileScreenPosition(this BombermanBase.Tile tile)
+        private static (int, int) CalculateTileScreenPosition(this ITile tile)
         {
             int posX = tile.Position.X * (pathTexture.Width + TileMapExtensions.TileBorderSize) + TileMapExtensions.WindowBorderSize;
             int posY = tile.Position.Y * (pathTexture.Height + TileMapExtensions.TileBorderSize) + TileMapExtensions.WindowBorderSize;

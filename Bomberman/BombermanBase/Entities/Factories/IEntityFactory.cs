@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombermanBase.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace BombermanBase
 {
     public interface IEntityFactory
     {
-        Entity CreateEntity(string username, int noOfBombs, int noOfLifes);
+        IEntity CreateEntity(string username, int noOfBombs, int noOfLifes);
     }
 }

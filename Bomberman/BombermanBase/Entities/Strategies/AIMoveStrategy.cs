@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BombermanBase
 {
-    public class AIMoveStrategy : IMoveStrategy
+    internal class AIMoveStrategy : IMoveStrategy
     {
-        public (int, int) Move(TileMap tileMap, (int X, int Y) crtPos, int xMove, int yMove)
+        public (int, int) Move(ITileMap tileMap, (int X, int Y) crtPos, int xMove, int yMove)
         {
             //xMove and yMove are not used - instead determine where the AI should move
 
@@ -21,7 +21,7 @@ namespace BombermanBase
 
                 try
                 {
-                    Tile nextTile = tileMap.GetTile((crtPos.X + x, crtPos.Y + y));
+                    ITile nextTile = tileMap.GetTile((crtPos.X + x, crtPos.Y + y));
 
                     //System.Console.WriteLine(nextTile.Position.ToString());
 
@@ -55,7 +55,7 @@ namespace BombermanBase
                         randomY = 0;
                     }
 
-                    Tile nextTile = tileMap.GetTile((randomX, randomY));
+                    ITile nextTile = tileMap.GetTile((randomX, randomY));
 
                     //System.Console.WriteLine(nextTile.Position.ToString());
 

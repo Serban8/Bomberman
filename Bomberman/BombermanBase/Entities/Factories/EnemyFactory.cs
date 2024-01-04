@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombermanBase.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,8 @@ namespace BombermanBase
 {
     public class EnemyFactory : IEntityFactory
     {
-        public Entity CreateEntity(string username, int noOfBombs = 4, int noOfLifes = 3)
-        { 
+        public IEntity CreateEntity(string username, int noOfBombs = 4, int noOfLifes = 3)
+        {
             return new Entity(username, noOfBombs, noOfLifes, (0, 0), new AIMoveStrategy());
         }
     }

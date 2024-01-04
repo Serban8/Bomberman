@@ -10,7 +10,7 @@ using BombermanMONO;
 
 namespace Bomberman
 {
-    public class Bomberman : Game, IObserver<BombermanBase.Bomberman>
+    public class Bomberman : Game, IBombermanObserver
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -20,7 +20,7 @@ namespace Bomberman
 
         private readonly int _windowBorderSize;
 
-        BombermanBase.Bomberman _game;
+        IBomberman _game;
         PlayerInfoBoard _playerInfoBoard;
 
         public Bomberman()
@@ -38,8 +38,6 @@ namespace Bomberman
 
             TileMapExtensions.WindowBorderSize = _windowBorderSize;
             //
-
-            _game = new BombermanBase.Bomberman();
         }
 
         protected override void Initialize()
@@ -50,7 +48,7 @@ namespace Bomberman
             _graphics.PreferredBackBufferHeight = (int)_windowSize.Y;
             _graphics.ApplyChanges();
 
-            _game.CreateGame();
+            _game = BombermanFactory.CreateGame("GigiGigiGigi");
 
             base.Initialize();
         }
@@ -71,13 +69,13 @@ namespace Bomberman
             EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
 
             LoadLevels();
-            _playerInfoBoard = new PlayerInfoBoard(this, 
-                _game.Player.Username, 
-                new List<string>(), 
-                new Rectangle(_windowBorderSize/5, 
-                    _windowBorderSize/6, 
-                    200, 
-                    (int)(_windowBorderSize/1.3)));
+            _playerInfoBoard = new PlayerInfoBoard(this,
+                _game.Player.Username,
+                new List<string>(),
+                new Rectangle(_windowBorderSize / 5,
+                    _windowBorderSize / 6,
+                    200,
+                    (int)(_windowBorderSize / 1.3)));
             Components.Add(_playerInfoBoard);
         }
 
@@ -85,12 +83,12 @@ namespace Bomberman
         {
             List<string> levels = new()
             {
-                "C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
-                "C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
-                "C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
-                //"C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
-                //"C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level2.txt" ,
-                //"C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level3.txt" 
+                //"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
+                //"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
+                //"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
+                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
+                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level2.txt" ,
+                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level3.txt"
             };
 
             //load the levels
@@ -107,7 +105,7 @@ namespace Bomberman
                 Exit();
 
             _game.Player.Update(_game.CrtLevel);
-            
+
             UpdatePlayerInfoBoard();
 
             base.Update(gameTime);
@@ -152,19 +150,14 @@ namespace Bomberman
             base.Draw(gameTime);
         }
 
-        public void OnCompleted()
+        public void OnMoveMade(object sender, MoveEventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        public void OnError(Exception error)
+        public void OnGameOver(object sender, GameOverEventArgs e)
         {
             throw new NotImplementedException();
-        }
-
-        public void OnNext(BombermanBase.Bomberman value)
-        {
-            //_game = value;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombermanBase.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,56 +8,44 @@ using System.Timers;
 
 namespace BombermanBase
 {
-    public class Unsubscriber : IDisposable
+    public class MoveEventArgs : EventArgs { };
+    public class GameOverEventArgs : EventArgs { };
+
+    public static class BombermanFactory
     {
-        private List<IObserver<Bomberman>> _observers;
-        private IObserver<Bomberman> _observer;
-
-        public Unsubscriber(List<IObserver<Bomberman>> observers, IObserver<Bomberman> observer)
+        public static IBomberman CreateGame(string username)
         {
-            _observers = observers;
-            _observer = observer;
-        }
+            IEntity player = new PlayerFactory().CreateEntity(username);
+            List<IEntity> enemies = new List<IEntity>() { new EnemyFactory().CreateEntity("YoloBOMB"), new EnemyFactory().CreateEntity("enemy2") };
+            Bomberman game = new Bomberman(player, enemies);
 
-        public void Dispose()
-        {
-            if (_observers.Contains(_observer))
-            {
-                _observers.Remove(_observer);
-            }
+            return game;
         }
     }
 
-    public class Bomberman : IBomberman, IObservable<Bomberman>
+    internal class Bomberman : IBomberman
     {
-        private readonly List<IObserver<Bomberman>> _observers;
+        private List<ITileMap> _levels;
 
-        private List<TileMap> _levels;
+        private ITileMap _crtLevel;
+        public ITileMap CrtLevel { get => _crtLevel; }
 
-        private TileMap _crtLevel;
-        public TileMap CrtLevel { get => _crtLevel; }
-        
-        private Entity _player;
-        public Entity Player { get => _player; }
-        private List<Entity> _enemies;
-        public List<Entity> Enemies { get => _enemies; }
+        private IEntity _player;
+        public IEntity Player { get => _player; }
+        private List<IEntity> _enemies;
+        public List<IEntity> Enemies { get => _enemies; }
 
 
         Timer enemyMoveTimer = new System.Timers.Timer(1000);
 
-        public Bomberman()
+        public Bomberman(IEntity player, List<IEntity> enemies)
         {
-            _observers = new List<IObserver<Bomberman>>();
+            _player = player;
+            _enemies = enemies;
+            _levels = new List<ITileMap>();
         }
 
-        public void CreateGame()
-        {
-            _player = new PlayerFactory().CreateEntity("GigelGigel");
-            _enemies = new List<Entity>() { new EnemyFactory().CreateEntity("YoloBOMB"), new EnemyFactory().CreateEntity("enemy2") };
-            _levels = new List<TileMap>();
-        }
-
-        public void AddLevel(TileMap tileMap)
+        public void AddLevel(ITileMap tileMap)
         {
             _levels.Add(tileMap);
 
@@ -73,34 +62,34 @@ namespace BombermanBase
 
             _crtLevel = _levels[levelNo];
 
-            enemyMoveTimer.Elapsed += (sender, e) => 
+            enemyMoveTimer.Elapsed += (sender, e) =>
             {
                 foreach (var enemy in _enemies)
                 {
-                    enemy.Move(_crtLevel); 
-                    NotifyMoveMade();
+                    enemy.Move(_crtLevel);
                 }
             };
             enemyMoveTimer.AutoReset = true;
             enemyMoveTimer.Enabled = true;
         }
 
-        public void NotifyMoveMade()
+        public void AddObserver(IBombermanObserver observer)
         {
-            foreach (var observer in _observers)
-            {
-                observer.OnNext(this);
-            }
+            throw new NotImplementedException();
         }
 
-        public IDisposable Subscribe(IObserver<Bomberman> observer)
+        public void RemoveObserver(IBombermanObserver observer)
         {
-            if (!_observers.Contains(observer))
-            {
-                _observers.Add(observer);
-            }
+            throw new NotImplementedException();
+        }
 
-            return new Unsubscriber(_observers, observer);
+        private void NotifyMoveMade()
+        {
+            throw new NotImplementedException();
+        }
+        private void NotifyGameOver()
+        {
+            throw new NotImplementedException();
         }
     }
 }

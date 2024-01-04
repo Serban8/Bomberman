@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace BombermanBase
 {
-    public interface IBomberman
+    public interface IBombermanObserver
     {
-        void CreateGame();
+        void OnMoveMade(object sender, MoveEventArgs e);
+        void OnGameOver(object sender, GameOverEventArgs e);
     }
 }

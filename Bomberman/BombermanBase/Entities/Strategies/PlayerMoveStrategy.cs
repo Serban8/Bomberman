@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace BombermanBase
 {
-    public class PlayerMoveStrategy : IMoveStrategy
+    internal class PlayerMoveStrategy : IMoveStrategy
     {
-        public (int, int) Move(TileMap tileMap, (int X, int Y) crtPos, int xMove, int yMove)
+        public (int, int) Move(ITileMap tileMap, (int X, int Y) crtPos, int xMove, int yMove)
         {
             try
             {
-                Tile nextTile = tileMap.GetTile((crtPos.X + xMove, crtPos.Y + yMove));
+                ITile nextTile = tileMap.GetTile((crtPos.X + xMove, crtPos.Y + yMove));
                 if (nextTile.IsWalkable())
                     return (crtPos.X + xMove, crtPos.Y + yMove);
             }
