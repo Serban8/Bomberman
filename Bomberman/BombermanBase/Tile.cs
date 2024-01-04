@@ -26,17 +26,26 @@ namespace BombermanBase
 
         public void Destroy()
         {
-            Type = TileType.Path;
+            if(Type == TileType.BreakableWall)
+            {
+                Type = TileType.Path;
+            }
         }
         public void AddBomb()
         {
-            Type = TileType.PathWithBomb;
+            if(Type == TileType.Path)
+            {
+                Type = TileType.PathWithBomb;
+            }
         }
         //public void Explode(Player player)
         public void Explode()
         {
-            Type = TileType.Path;
-
+            if(Type != TileType.UnbreakableWall)
+            {
+                Type = TileType.Path;
+            }
+          
             //player.AddBomb();
         }
 
