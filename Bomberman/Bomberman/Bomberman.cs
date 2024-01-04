@@ -6,6 +6,7 @@ using BombermanMONO.LogicExtensions;
 using System.Timers;
 using System.Collections.Generic;
 using System;
+using BombermanMONO;
 
 namespace Bomberman
 {
@@ -20,6 +21,7 @@ namespace Bomberman
         private readonly int _windowBorderSize;
 
         BombermanBase.Bomberman _game;
+        PlayerInfoBoard _playerInfoBoard;
 
         public Bomberman()
         {
@@ -67,7 +69,16 @@ namespace Bomberman
             PlayerExtensions.playerTexture = Content.Load<Texture2D>("Sprites/player");
 
             EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
+
             LoadLevels();
+            _playerInfoBoard = new PlayerInfoBoard(this, 
+                _game.Player.Username, 
+                new List<string>(), 
+                new Rectangle(_windowBorderSize/5, 
+                    _windowBorderSize/6, 
+                    200, 
+                    (int)(_windowBorderSize/1.3)));
+            Components.Add(_playerInfoBoard);
         }
 
         protected void LoadLevels()
@@ -89,17 +100,34 @@ namespace Bomberman
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             _game.Player.Update(_game.CrtLevel);
+            
+            UpdatePlayerInfoBoard();
 
             base.Update(gameTime);
         }
 
+        private void UpdatePlayerInfoBoard()
+        {
+            string playerLivesInfo = $"Lives: {_game.Player.NoOfLives}";
+            string playerBombosInfo = $"Bombs: {_game.Player.NoOfBombs}";
+
+            List<string> playerInfo = new List<string>()
+            {
+                playerLivesInfo,
+                playerBombosInfo
+            };
+
+            _playerInfoBoard.UpdateInfo(playerInfo);
+            //_playerInfoBoard = new PlayerInfoBoard(this, _game.Player.Username, playerInfo, new Rectangle(_windowBorderSize/5, _windowBorderSize/6, 200, (int)(_windowBorderSize/1.3)));
+        }
+
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new Color(25, 25, 25));
+            GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             _spriteBatch.Draw(_backgroundTexture, Vector2.Zero, Color.White);
@@ -114,7 +142,9 @@ namespace Bomberman
                 var screenCoordsEnemy = enemy.GetScreenCoords();
                 EnemyExtensions.Draw(screenCoordsEnemy, _spriteBatch);
             }
-            
+
+            _playerInfoBoard.Draw(gameTime);
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }

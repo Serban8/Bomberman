@@ -25,6 +25,20 @@
 /processorParam:TextureFormat=Color
 /build:Backgrounds/DarkGrayWithStars.png
 
+#begin Fonts/StatusBoardInfoFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/StatusBoardInfoFont.spritefont
+
+#begin Fonts/StatusBoardUsernameFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/StatusBoardUsernameFont.spritefont
+
 #begin Level/Level1.txt
 /copy:Level/Level1.txt
 

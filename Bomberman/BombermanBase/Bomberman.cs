@@ -51,8 +51,8 @@ namespace BombermanBase
 
         public void CreateGame()
         {
-            _player = new PlayerFactory().CreateEntity("player");
-            _enemies = new List<Entity>() { new EnemyFactory().CreateEntity("enemy1"), new EnemyFactory().CreateEntity("enemy2") };
+            _player = new PlayerFactory().CreateEntity("GigelGigel");
+            _enemies = new List<Entity>() { new EnemyFactory().CreateEntity("YoloBOMB"), new EnemyFactory().CreateEntity("enemy2") };
             _levels = new List<TileMap>();
         }
 
