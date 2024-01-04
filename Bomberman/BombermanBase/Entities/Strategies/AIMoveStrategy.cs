@@ -12,72 +12,57 @@ namespace BombermanBase
         {
             //xMove and yMove are not used - instead determine where the AI should move
 
-            Random rnd = new Random();
-            int x = rnd.Next(-1, 2);
-            int y = rnd.Next(-1, 2);
-
-            try
+            //try to determine a valid move - capped at 100 tries to avoid infinite loops
+            for (int i = 0; i < 100; ++i)
             {
-                Tile nextTile = tileMap.GetTile((crtPos.X + x, crtPos.Y + y));
+                Random rnd = new Random();
+                int x = rnd.Next(-1, 2);
+                int y = rnd.Next(-1, 2);
 
-                System.Console.WriteLine(nextTile.Position.ToString());
-
-                if (nextTile.IsWalkable())
+                try
                 {
-                    return (crtPos.X + x, crtPos.Y + y);
+                    Tile nextTile = tileMap.GetTile((crtPos.X + x, crtPos.Y + y));
+
+                    //System.Console.WriteLine(nextTile.Position.ToString());
+
+                    if (nextTile.IsWalkable())
+                    {
+                        return (crtPos.X + x, crtPos.Y + y);
+                    }
                 }
-            }
-            catch
-            {
-                var mapDimensions = tileMap.MapSize;
-
-                bool xInvalid = false;
-                bool yInvalid = false;
-
-                int randomX = crtPos.X + x;
-                int randomY = crtPos.Y + y;
-
-                if (randomX >= mapDimensions.Width)
+                catch
                 {
-                    x--;
-                    xInvalid = true;
-                }
-                else if (randomX < 0)
-                {
-                    x++;
-                    xInvalid = true;
-                }
-                
-                if (randomY >= mapDimensions.Height)
-                {
-                    y--;
-                    yInvalid = true;
-                }
-                else if (randomY < 0)
-                {
-                    y++;
-                    yInvalid = true;
-                }
+                    var mapDimensions = tileMap.MapSize;
 
-                if (xInvalid && !yInvalid)
-                {
-                    x = crtPos.X;
-                    xInvalid = false;
-                }
-                
-                if (yInvalid && !xInvalid) 
-                {
-                    y = crtPos.Y;
-                }
+                    int randomX = crtPos.X + x;
+                    int randomY = crtPos.Y + y;
 
+                    if (randomX >= mapDimensions.Width)
+                    {
+                        randomX = mapDimensions.Width - 1;
+                    }
+                    else if (randomX < 0)
+                    {
+                        randomX = 0;
+                    }
 
-                Tile nextTile = tileMap.GetTile((crtPos.X + x, crtPos.Y + y));
+                    if (randomY >= mapDimensions.Height)
+                    {
+                        randomY = mapDimensions.Height - 1;
+                    }
+                    else if (randomY < 0)
+                    {
+                        randomY = 0;
+                    }
 
-                System.Console.WriteLine(nextTile.Position.ToString());
+                    Tile nextTile = tileMap.GetTile((randomX, randomY));
 
-                if (nextTile.IsWalkable())
-                {
-                    return (crtPos.X + y, crtPos.Y + y);
+                    //System.Console.WriteLine(nextTile.Position.ToString());
+
+                    if (nextTile.IsWalkable())
+                    {
+                        return (randomX, randomY);
+                    }
                 }
             }
             return crtPos;

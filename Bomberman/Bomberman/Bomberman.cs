@@ -17,12 +17,7 @@ namespace Bomberman
         private readonly Vector2 _windowSize;
         private Texture2D _backgroundTexture;
 
-        //private BombermanBase.Entity _player;
-        //private BombermanBase.TileMap _tileMap;
-        //private BombermanBase.Entity _enemy;
-
         private readonly int _windowBorderSize;
-        //Timer aTimer = new System.Timers.Timer(1000);
 
         BombermanBase.Bomberman _game;
 

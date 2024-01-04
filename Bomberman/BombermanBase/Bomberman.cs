@@ -38,12 +38,11 @@ namespace BombermanBase
         
         private Entity _player;
         public Entity Player { get => _player; }
-        private Entity _enemy;
         private List<Entity> _enemies;
         public List<Entity> Enemies { get => _enemies; }
 
 
-        Timer enemyMoveTimer = new System.Timers.Timer(800);
+        Timer enemyMoveTimer = new System.Timers.Timer(1000);
 
         public Bomberman()
         {

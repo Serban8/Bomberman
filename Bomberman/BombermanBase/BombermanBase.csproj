@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Entities\Strategies\AIMoveStrategy.cs" />
     <Compile Include="Bomberman.cs" />
-    <Compile Include="Entities\Enemy.cs" />
     <Compile Include="Entities\Factories\EnemyFactory.cs" />
     <Compile Include="IBomberman.cs" />
     <Compile Include="Entities\Factories\IEntityFactory.cs" />

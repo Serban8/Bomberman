@@ -17,10 +17,5 @@ namespace BombermanMONO.LogicExtensions
         {
             spriteBatch.Draw(EnemyTexture, screenCoords, null, Color.White, 0f, Vector2.Zero, 1f, effects, 0);
         }
-
-        public static void Update(this BombermanBase.Enemy enemy)
-        {
-            enemy.ChangeDirection();
-        }
     }
 }

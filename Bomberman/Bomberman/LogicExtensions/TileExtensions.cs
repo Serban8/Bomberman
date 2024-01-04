@@ -17,9 +17,16 @@ namespace BombermanMONO.LogicExtensions
 
         public static void Draw(this BombermanBase.Tile tile, SpriteBatch spriteBatch)
         {
+            //List<SpriteEffects> rotation = new List<SpriteEffects>() { SpriteEffects.None, SpriteEffects.FlipHorizontally, SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically };
             (int x, int y) screenPosition = tile.CalculateTileScreenPosition();
             if (tile.Type == BombermanBase.TileType.Path)
             {
+                //select a random effect from the list
+                //Random rnd = new Random();
+                //int effectIndex = rnd.Next(0, rotation.Count);
+                //SpriteEffects effect = rotation[effectIndex];
+
+                //spriteBatch.Draw(pathTexture, new Vector2(screenPosition.x, screenPosition.y), null, Color.White, 0f, Vector2.Zero, 1f, effect, 0);
                 spriteBatch.Draw(pathTexture, new Vector2(screenPosition.x, screenPosition.y), Color.White);
             }
             else if (tile.Type == BombermanBase.TileType.UnbreakableWall)
