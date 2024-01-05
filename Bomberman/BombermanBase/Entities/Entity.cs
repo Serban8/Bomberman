@@ -63,7 +63,10 @@ namespace BombermanBase
 
         public void RemoveLife()
         {
-            _noOfLives--;
+            if (_noOfLives > 0 ) 
+            {
+                _noOfLives--;
+            }
         }
 
         public void Move(ITileMap tileMap, int x = 0, int y = 0)
