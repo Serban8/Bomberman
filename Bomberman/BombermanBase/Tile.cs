@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace BombermanBase
 {
+    public static class TileFactory
+    {
+        public static ITile CreateTile((int X, int Y) position, TileType type)
+        {
+            return new Tile(position, type);
+        }
+    }
     internal class Tile : ITile
     {
         public (int X, int Y) Position { get; }

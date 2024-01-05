@@ -93,73 +93,109 @@ namespace BombergameTests
             game.Player.RemoveBomb();
             Assert.AreEqual(0, game.Player.NoOfBombs);
         }
-        //[TestMethod]
-        //public void TestDestroy()
-        //{
-        //    //BombermanBase.ITile tileP = new BombermanBase.Tile((1, 1), BombermanBase.TileType.Path);
-        //    //BombermanBase.Tile tilePB = new BombermanBase.Tile((1, 1), BombermanBase.TileType.PathWithBomb);
-        //    //BombermanBase.Tile tileUW = new BombermanBase.Tile((1, 1), BombermanBase.TileType.UnbreakableWall);
-        //    //BombermanBase.Tile tileBW = new BombermanBase.Tile((1, 1), BombermanBase.TileType.BreakableWall);
+        [TestMethod]
+        public void LosingLife()
+        {
+            var game = BombermanFactory.CreateGame("Denis");
 
-        //    //tileP.Destroy();
-        //    //tilePB.Destroy();
-        //    //tileUW.Destroy();
-        //    //tileBW.Destroy();
+            int exNoOfLives = 2;
 
-        //    //Assert.AreEqual(BombermanBase.TileType.Path, tileP.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.PathWithBomb, tilePB.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.UnbreakableWall, tileUW.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.Path, tileBW.Type);
-        //}
-        //[TestMethod]
-        //public void TestAddBomb()
-        //{
-        //    //BombermanBase.Tile tileP = new BombermanBase.Tile((1, 1), BombermanBase.TileType.Path);
-        //    //BombermanBase.Tile tilePB = new BombermanBase.Tile((1, 1), BombermanBase.TileType.PathWithBomb);
-        //    //BombermanBase.Tile tileUW = new BombermanBase.Tile((1, 1), BombermanBase.TileType.UnbreakableWall);
-        //    //BombermanBase.Tile tileBW = new BombermanBase.Tile((1, 1), BombermanBase.TileType.BreakableWall);
+            while (game.Player.NoOfLives > 0)
+            {
+                game.Player.RemoveLife();
+                Assert.AreEqual(exNoOfLives, game.Player.NoOfLives);
+                exNoOfLives--;
+            }
+            game.Player.RemoveLife();
+            Assert.AreEqual(0, game.Player.NoOfLives);
+        }
+        [TestMethod]
+        public void MakePathFromBWall()
+        {
+            var game = BombermanFactory.CreateGame("Denis");
+            var map = TileMapFactory.CreateTileMap((24, 12), "C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
 
-        //    //tileP.AddBomb();
-        //    //tilePB.AddBomb();
-        //    //tileUW.AddBomb();
-        //    //tileBW.AddBomb();
+            game.Player.Move(map, 4, 5);
 
-        //    //Assert.AreEqual(BombermanBase.TileType.PathWithBomb, tileP.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.PathWithBomb, tilePB.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.UnbreakableWall, tileUW.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.BreakableWall, tileBW.Type);
-        //}
-        //[TestMethod]
-        //public void TestExplode()
-        //{
-        //    //BombermanBase.Tile tileP = new BombermanBase.Tile((1, 1), BombermanBase.TileType.Path);
-        //    //BombermanBase.Tile tilePB = new BombermanBase.Tile((1, 1), BombermanBase.TileType.PathWithBomb);
-        //    //BombermanBase.Tile tileUW = new BombermanBase.Tile((1, 1), BombermanBase.TileType.UnbreakableWall);
-        //    //BombermanBase.Tile tileBW = new BombermanBase.Tile((1, 1), BombermanBase.TileType.BreakableWall);
+            //try to move right but is a breakable wall so it will stay in position
+            game.Player.Move(map, 1, 0);
+            Assert.AreEqual((4, 5), game.Player.Position);
 
-        //    //tileP.Explode();
-        //    //tilePB.Explode();
-        //    //tileUW.Explode();
-        //    //tileBW.Explode();
+            //place bomb
+            map.Explode(map.GetTile(game.Player.Position));
 
-        //    //Assert.AreEqual(BombermanBase.TileType.Path, tileP.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.Path, tilePB.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.UnbreakableWall, tileUW.Type);
-        //    //Assert.AreEqual(BombermanBase.TileType.Path, tileBW.Type);
-        //}
-        //[TestMethod]
-        //public void TestWalkability()
-        //{
-        //    //BombermanBase.Tile tileP = new BombermanBase.Tile((1,1),BombermanBase.TileType.Path);
-        //    //BombermanBase.Tile tilePB = new BombermanBase.Tile((1, 1), BombermanBase.TileType.PathWithBomb);
-        //    //BombermanBase.Tile tileUW = new BombermanBase.Tile((1,1),BombermanBase.TileType.UnbreakableWall);
-        //    //BombermanBase.Tile tileBW = new BombermanBase.Tile((1,1),BombermanBase.TileType.BreakableWall);
+            //try to move player again and this time it should work because the wall is broken
+            game.Player.Move(map, 1, 0);
+            Assert.AreEqual((5, 5), game.Player.Position);
 
-        //    //Assert.IsTrue(tileP.IsWalkable());
-        //    //Assert.IsTrue(tilePB.IsWalkable());
-        //    //Assert.IsFalse(tileUW.IsWalkable());
-        //    //Assert.IsFalse(tileBW.IsWalkable());
-        //    //Assert.IsFalse(tileP.IsWalkable());
-        //}
+        }
+    
+        [TestMethod]
+        public void TestDestroyTile()
+        {
+            BombermanBase.ITile tileP = TileFactory.CreateTile((1, 1), TileType.Path);
+            BombermanBase.ITile tilePB = TileFactory.CreateTile((1, 1), TileType.PathWithBomb);
+            BombermanBase.ITile tileUW = TileFactory.CreateTile((1, 1), TileType.UnbreakableWall);
+            BombermanBase.ITile tileBW = TileFactory.CreateTile((1, 1), TileType.BreakableWall);
+
+            tileP.Destroy();
+            tilePB.Destroy();
+            tileUW.Destroy();
+            tileBW.Destroy();
+
+            Assert.AreEqual(BombermanBase.TileType.Path, tileP.Type);
+            Assert.AreEqual(BombermanBase.TileType.PathWithBomb, tilePB.Type);
+            Assert.AreEqual(BombermanBase.TileType.UnbreakableWall, tileUW.Type);
+            Assert.AreEqual(BombermanBase.TileType.Path, tileBW.Type);
+        }
+        [TestMethod]
+        public void TestAddBomb()
+        {
+            BombermanBase.ITile tileP = TileFactory.CreateTile((1, 1), TileType.Path);
+            BombermanBase.ITile tilePB = TileFactory.CreateTile((1, 1), TileType.PathWithBomb);
+            BombermanBase.ITile tileUW = TileFactory.CreateTile((1, 1), TileType.UnbreakableWall);
+            BombermanBase.ITile tileBW = TileFactory.CreateTile((1, 1), TileType.BreakableWall);
+
+            tileP.AddBomb();
+            tilePB.AddBomb();
+            tileUW.AddBomb();
+            tileBW.AddBomb();
+
+            Assert.AreEqual(BombermanBase.TileType.PathWithBomb, tileP.Type);
+            Assert.AreEqual(BombermanBase.TileType.PathWithBomb, tilePB.Type);
+            Assert.AreEqual(BombermanBase.TileType.UnbreakableWall, tileUW.Type);
+            Assert.AreEqual(BombermanBase.TileType.BreakableWall, tileBW.Type);
+        }
+        [TestMethod]
+        public void TestExplode()
+        {
+            BombermanBase.ITile tileP = TileFactory.CreateTile((1, 1), TileType.Path);
+            BombermanBase.ITile tilePB = TileFactory.CreateTile((1, 1), TileType.PathWithBomb);
+            BombermanBase.ITile tileUW = TileFactory.CreateTile((1, 1), TileType.UnbreakableWall);
+            BombermanBase.ITile tileBW = TileFactory.CreateTile((1, 1), TileType.BreakableWall);
+
+            tileP.Explode();
+            tilePB.Explode();
+            tileUW.Explode();
+            tileBW.Explode();
+
+            Assert.AreEqual(BombermanBase.TileType.Path, tileP.Type);
+            Assert.AreEqual(BombermanBase.TileType.Path, tilePB.Type);
+            Assert.AreEqual(BombermanBase.TileType.UnbreakableWall, tileUW.Type);
+            Assert.AreEqual(BombermanBase.TileType.Path, tileBW.Type);
+        }
+        [TestMethod]
+        public void TestWalkability()
+        {
+            BombermanBase.ITile tileP = TileFactory.CreateTile((1, 1), TileType.Path);
+            BombermanBase.ITile tilePB = TileFactory.CreateTile((1, 1), TileType.PathWithBomb);
+            BombermanBase.ITile tileUW = TileFactory.CreateTile((1, 1), TileType.UnbreakableWall);
+            BombermanBase.ITile tileBW = TileFactory.CreateTile((1, 1), TileType.BreakableWall);
+
+            Assert.IsTrue(tileP.IsWalkable());
+            Assert.IsTrue(tilePB.IsWalkable());
+            Assert.IsFalse(tileUW.IsWalkable());
+            Assert.IsFalse(tileBW.IsWalkable());
+        }
     }
 }
