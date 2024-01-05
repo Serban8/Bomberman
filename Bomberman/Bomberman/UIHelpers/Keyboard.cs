@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombermanMONO
+namespace BombermanMONO.UIHelpers
 {
     public class Keyboard
     {

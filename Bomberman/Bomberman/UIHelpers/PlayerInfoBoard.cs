@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombermanMONO
+namespace BombermanMONO.UIHelpers
 {
     internal class PlayerInfoBoard : DrawableGameComponent
     {
@@ -60,7 +60,7 @@ namespace BombermanMONO
             }
             nextLineInfo = nextLineInfo.Substring(0, nextLineInfo.Length - 3);
 
-            textPosition = new Vector2(_rectangleBounds.X + _rectangleBounds.Width / 2 - _infoFont.MeasureString(nextLineInfo).X / 2, 
+            textPosition = new Vector2(_rectangleBounds.X + _rectangleBounds.Width / 2 - _infoFont.MeasureString(nextLineInfo).X / 2,
                 _rectangleBounds.Y + _rectangleBounds.Height - (_infoFont.MeasureString(nextLineInfo).Y + _rectBorderSize));
             _spriteBatch.DrawString(_infoFont, nextLineInfo, textPosition, Color.White);
 

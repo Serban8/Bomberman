@@ -34,6 +34,10 @@ namespace BombermanBase
         ITileMap CrtLevel { get; }
         void AddLevel(ITileMap tileMap);
         void LoadLevel(int levelNo);
+        void MovePlayer(int x, int y);
+        void CheckGameOver();
+        void Pause();
+        void Resume();
         void AddObserver(IBombermanObserver observer);
         void RemoveObserver(IBombermanObserver observer);
     }

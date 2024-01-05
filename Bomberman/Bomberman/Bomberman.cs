@@ -6,9 +6,9 @@ using BombermanMONO.LogicExtensions;
 using System.Timers;
 using System.Collections.Generic;
 using System;
-using BombermanMONO;
+using BombermanMONO.UIHelpers;
 
-namespace Bomberman
+namespace BombermanMONO
 {
     public class Bomberman : Game, IBombermanObserver
     {
@@ -19,9 +19,14 @@ namespace Bomberman
         private Texture2D _backgroundTexture;
 
         private readonly int _windowBorderSize;
+        public Vector2 CenterScreen
+            => new Vector2(_graphics.GraphicsDevice.Viewport.Width / 2f, _graphics.GraphicsDevice.Viewport.Height / 2f);
 
         IBomberman _game;
         PlayerInfoBoard _playerInfoBoard;
+
+        public SpriteFont DialogFont;
+        private DialogBox _dialogBox;
 
         public Bomberman()
         {
@@ -68,6 +73,8 @@ namespace Bomberman
 
             EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
 
+            DialogFont = Content.Load<SpriteFont>("Fonts/DialogFont");
+
             LoadLevels();
             _playerInfoBoard = new PlayerInfoBoard(this,
                 _game.Player.Username,
@@ -77,6 +84,18 @@ namespace Bomberman
                     200,
                     (int)(_windowBorderSize / 1.3)));
             Components.Add(_playerInfoBoard);
+
+            _dialogBox = new DialogBox(this)
+            {
+                Text = "Hello World! Press Enter to proceed.\n" +
+                       "I will be on the next pane! " +
+                       "And wordwrap will occur, especially if there are some longer words!\n" +
+                       "Monospace fonts work best but you might not want Courier New.\n" +
+                       "In this code sample, after this dialog box finishes, you can press the O key to open a new one."
+            };
+
+            // Initialize the dialog box (this also calls the Show() method)
+            _dialogBox.Initialize();
         }
 
         protected void LoadLevels()
@@ -104,9 +123,30 @@ namespace Bomberman
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _game.Player.Update(_game.CrtLevel);
+            _game.Update();
+            _game.CheckGameOver();
 
             UpdatePlayerInfoBoard();
+
+            if (_dialogBox.Active)
+            {
+                _dialogBox.Update();
+                _game.Pause();
+            }
+            else
+            {
+                _game.Resume();
+            }
+
+            // Debug key to show opening a new dialog box on demand
+            if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.O))
+            {
+                if (!_dialogBox.Active)
+                {
+                    _dialogBox = new DialogBox(this) { Text = "New dialog box!" };
+                    _dialogBox.Initialize();
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -129,22 +169,18 @@ namespace Bomberman
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp);
 
             _spriteBatch.Draw(_backgroundTexture, Vector2.Zero, Color.White);
 
-            _game.CrtLevel.Draw(_spriteBatch);
+            //draw all emenets of the game - player, enemies, tiles
+            _game.Draw(_spriteBatch);
 
-            var screenCoords = _game.Player.GetScreenCoords();
-            PlayerExtensions.Draw(screenCoords, _spriteBatch);
-
-            foreach (var enemy in _game.Enemies)
-            {
-                var screenCoordsEnemy = enemy.GetScreenCoords();
-                EnemyExtensions.Draw(screenCoordsEnemy, _spriteBatch);
-            }
-
+            //draw the player status board
             _playerInfoBoard.Draw(gameTime);
+
+            //draw the dialog box, if active
+            _dialogBox.Draw(_spriteBatch);
 
             _spriteBatch.End();
             base.Draw(gameTime);

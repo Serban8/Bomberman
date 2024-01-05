@@ -3,6 +3,7 @@ using BombermanBase.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -28,17 +29,17 @@ namespace BombermanMONO.LogicExtensions
 
         public static void Update(this IEntity entity, ITileMap tileMap)
         {
-            BombermanMONO.Keyboard.GetState();
+            UIHelpers.Keyboard.GetState();
 
             bool updated = false;
-            if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Left))
+            if (UIHelpers.Keyboard.IsKeyPressed(Keys.Left))
             {
                 entity.Move(tileMap, -1, 0);
                 updated = true;
 
                 PlayerExtensions.effects = SpriteEffects.FlipHorizontally;
             }
-            else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Right))
+            else if (UIHelpers.Keyboard.IsKeyPressed(Keys.Right))
             {
                 entity.Move(tileMap, 1, 0);
                 updated = true;
@@ -46,20 +47,24 @@ namespace BombermanMONO.LogicExtensions
                 PlayerExtensions.effects = SpriteEffects.None;
             }
 
-            if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Up))
+            if (UIHelpers.Keyboard.IsKeyPressed(Keys.Up))
             {
                 entity.Move(tileMap, 0, -1);
                 updated = true;
 
             }
-            else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Down))
+            else if (UIHelpers.Keyboard.IsKeyPressed(Keys.Down))
             {
                 entity.Move(tileMap, 0, 1);
                 updated = true;
             }
-            else if (BombermanMONO.Keyboard.IsKeyPressed(Keys.Space))
+            else if (UIHelpers.Keyboard.IsKeyPressed(Keys.Space))
             {
                 tileMap.PlaceBomb(entity);
+            }
+            else if (UIHelpers.Keyboard.IsKeyPressed(Keys.K))
+            {
+                entity.RemoveLife();
             }
 
             if (!updated)

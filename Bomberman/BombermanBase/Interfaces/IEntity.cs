@@ -14,6 +14,7 @@ namespace BombermanBase.Entities
         (int X, int Y) Position { get; }
         void RemoveBomb();
         void AddBomb();
+        void RemoveLife();
         void Move(ITileMap tileMap, int x = 0, int y = 0);
     }
 }

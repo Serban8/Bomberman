@@ -8,8 +8,22 @@ using System.Timers;
 
 namespace BombermanBase
 {
-    public class MoveEventArgs : EventArgs { };
-    public class GameOverEventArgs : EventArgs { };
+    public class MoveEventArgs : EventArgs
+    {
+        public IEntity Entity { get; set; }
+        public MoveEventArgs(IEntity entity)
+        {
+            Entity = entity;
+        }
+    };
+    public class GameOverEventArgs : EventArgs
+    {
+        public IEntity Winner { get; set; }
+        public GameOverEventArgs(IEntity entity)
+        {
+            Winner = entity;
+        }
+    };
 
     public static class BombermanFactory
     {
@@ -35,14 +49,17 @@ namespace BombermanBase
         private List<IEntity> _enemies;
         public List<IEntity> Enemies { get => _enemies; }
 
-
         Timer enemyMoveTimer = new System.Timers.Timer(1000);
+
+        private bool _paused = false;
+        private List<IBombermanObserver> _observers;
 
         public Bomberman(IEntity player, List<IEntity> enemies)
         {
             _player = player;
             _enemies = enemies;
             _levels = new List<ITileMap>();
+            _observers = new List<IBombermanObserver>();
         }
 
         public void AddLevel(ITileMap tileMap)
@@ -67,29 +84,72 @@ namespace BombermanBase
                 foreach (var enemy in _enemies)
                 {
                     enemy.Move(_crtLevel);
+                    NotifyMoveMade(enemy);
                 }
             };
             enemyMoveTimer.AutoReset = true;
             enemyMoveTimer.Enabled = true;
         }
 
+        public void MovePlayer(int x, int y)
+        {
+            if (!_paused)
+            {
+                _player.Move(_crtLevel, x, y);
+                NotifyMoveMade(_player);
+            }
+        }
+
+        public void CheckGameOver()
+        {
+            if (_player.NoOfLives == 0)
+            {
+                NotifyGameOver(_enemies[0]);
+            }
+            else if (_enemies.Count == 0)
+            {
+                NotifyGameOver(_player);
+            }
+        }
+
+        public void Pause()
+        {
+            _paused = true;
+            if (enemyMoveTimer.Enabled)
+                enemyMoveTimer.Stop();
+        }
+
+        public void Resume()
+        {
+            _paused = false;
+            if (!enemyMoveTimer.Enabled)
+                enemyMoveTimer.Start();
+        }
+
+        #region Observer-related methods
         public void AddObserver(IBombermanObserver observer)
         {
-            throw new NotImplementedException();
+            _observers.Add(observer);
         }
-
         public void RemoveObserver(IBombermanObserver observer)
         {
-            throw new NotImplementedException();
+            _observers.Remove(observer);
         }
 
-        private void NotifyMoveMade()
+        private void NotifyMoveMade(IEntity entity)
         {
-            throw new NotImplementedException();
+            foreach (var observer in _observers)
+            {
+                observer.OnMoveMade(this, new MoveEventArgs(entity));
+            }
         }
-        private void NotifyGameOver()
+        private void NotifyGameOver(IEntity entity)
         {
-            throw new NotImplementedException();
+            foreach (var observer in _observers)
+            {
+                observer.OnGameOver(this, new GameOverEventArgs(entity));
+            }
         }
+        #endregion
     }
 }

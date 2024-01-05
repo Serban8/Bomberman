@@ -1,3 +1,3 @@
 ﻿
-using var game = new Bomberman.Bomberman();
+using var game = new BombermanMONO.Bomberman();
 game.Run();

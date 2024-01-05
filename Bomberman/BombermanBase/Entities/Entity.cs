@@ -43,6 +43,11 @@ namespace BombermanBase
             _noOfBombs++;
         }
 
+        public void RemoveLife()
+        {
+            _noOfLives--;
+        }
+
         public void Move(ITileMap tileMap, int x = 0, int y = 0)
         {
             _position = _moveStrategy.Move(tileMap, Position, x, y);
