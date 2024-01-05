@@ -33,9 +33,27 @@ namespace BombermanBase
             _moveStrategy = moveStrategy;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Entity otherPlayer = (Entity)obj;
+
+            
+            return this._username == otherPlayer.Username && this._noOfBombs == otherPlayer.NoOfBombs && this._noOfLives == otherPlayer.NoOfLives
+                && this._position == otherPlayer.Position;
+
+        }
+
         public void RemoveBomb()
         {
-            _noOfBombs--;
+            if( _noOfBombs > 0 )
+            {
+                _noOfBombs--;
+            }
         }
 
         public void AddBomb()
