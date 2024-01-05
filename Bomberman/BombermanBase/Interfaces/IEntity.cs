@@ -12,6 +12,7 @@ namespace BombermanBase.Entities
         int NoOfBombs { get; }
         int NoOfLives { get; }
         (int X, int Y) Position { get; }
+        bool Immortal { get; set; }
         void RemoveBomb();
         void AddBomb();
         void RemoveLife();

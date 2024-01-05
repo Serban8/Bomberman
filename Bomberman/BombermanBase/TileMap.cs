@@ -46,33 +46,16 @@ namespace BombermanBase
             return Tiles[pos.X, pos.Y];
         }
 
-        public void PlaceBomb(IEntity player)
-        {
-            if (player.NoOfBombs > 0)
-            {
-                ITile currentTile = GetTile(player.Position);
-                currentTile.AddBomb();
-                player.RemoveBomb();
-                bombTimer = new Timer(5000);
-                bombTimer.Elapsed += (sender, e) => Explode(currentTile);
-                bombTimer.AutoReset = false;
-                bombTimer.Start();
-            }
-        }
-
         public void Explode(ITile tile)
         {
             (int X, int Y) position = tile.Position;
 
             tile.Explode();
 
-            int[] rowOffsets = { -1, 1, 0, 0, -2, 2, 0, 0 };
-            int[] colOffsets = { 0, 0, -1, 1, 0, 0, -2, 2 };
-
-            for (int i = 0; i < rowOffsets.Length; i++)
+            for (int i = 0; i < ExplosionOffsets.RowOffsets.Length; i++)
             {
-                int newRow = position.X + rowOffsets[i];
-                int newCol = position.Y + colOffsets[i];
+                int newRow = position.X + ExplosionOffsets.RowOffsets[i];
+                int newCol = position.Y + ExplosionOffsets.ColOffsets[i];
                 if (newRow > 0 && newRow < MapSize.Width && newCol > 0 && newCol < MapSize.Height)
                 {
                     if (Tiles[newRow, newCol].Type == TileType.BreakableWall)

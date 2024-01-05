@@ -32,12 +32,15 @@ namespace BombermanBase
         IEntity Player { get; }
         List<IEntity> Enemies { get; }
         ITileMap CrtLevel { get; }
+        bool EnemiesPaused { get; }
         void AddLevel(ITileMap tileMap);
         void LoadLevel(int levelNo);
         void MovePlayer(int x, int y);
         void CheckGameOver();
-        void Pause();
-        void Resume();
+        void PlaceBomb();
+        void PauseGame();
+        void PauseEnemies(); //remove
+        void ResumeGame();
         void AddObserver(IBombermanObserver observer);
         void RemoveObserver(IBombermanObserver observer);
     }

@@ -13,6 +13,12 @@ namespace BombermanBase
         BreakableWall,
         PathWithBomb
     }
+
+    public static class ExplosionOffsets
+    {
+        public static readonly int[] RowOffsets = { -1, 1, 0, 0, 0, -2, 2, 0, 0 };
+        public static readonly int[] ColOffsets = { 0, 0, -1, 1, 0, 0, 0, -2, 2 };
+    }
     public interface ITile
     {
         (int X, int Y) Position { get; }

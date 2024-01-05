@@ -22,6 +22,9 @@ namespace BombermanBase
         private (int, int) _position;
         public (int X, int Y) Position { get => _position; }
 
+        private bool _immortal = false;
+        public bool Immortal { get => _immortal; set { _immortal = value; } }
+        
         private IMoveStrategy _moveStrategy;
 
         public Entity(string username, int noOfBombs, int noOfLives, (int, int) position, IMoveStrategy moveStrategy)
@@ -63,7 +66,8 @@ namespace BombermanBase
 
         public void RemoveLife()
         {
-            _noOfLives--;
+            if (!_immortal)
+                _noOfLives--;
         }
 
         public void Move(ITileMap tileMap, int x = 0, int y = 0)

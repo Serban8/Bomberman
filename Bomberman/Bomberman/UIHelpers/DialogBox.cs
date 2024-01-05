@@ -150,7 +150,7 @@ namespace BombermanMONO.UIHelpers
             BorderWidth = 2;
             DialogColor = Color.Black;
 
-            FillColor = new Color(1.0f, 1.0f, 1.0f, 0.8f);
+            FillColor = new Color(1.0f, 1.0f, 1.0f, 0.9f);
 
             BorderColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -169,7 +169,7 @@ namespace BombermanMONO.UIHelpers
             Size = new Vector2(sizeX, sizeY);
 
             var posX = _game.CenterScreen.X - Size.X / 2f;
-            var posY = _game.GraphicsDevice.Viewport.Height - Size.Y - 30;
+            var posY = _game.CenterScreen.Y - Size.Y /2f;
 
             Position = new Vector2(posX, posY);
         }
@@ -269,10 +269,10 @@ namespace BombermanMONO.UIHelpers
                 // This stops blinking on the last page
                 if (BlinkIndicator() || _currentPage == _pages.Count - 1)
                 {
-                    var indicatorPosition = new Vector2(TextRectangle.X + TextRectangle.Width - _characterSize.X - 4,
+                    var indicatorPosition = new Vector2(TextRectangle.X + TextRectangle.Width - _characterSize.X*3 - 4,
                         TextRectangle.Y + TextRectangle.Height - _characterSize.Y);
 
-                    spriteBatch.DrawString(_game.DialogFont, ">", indicatorPosition, Color.Red);
+                    spriteBatch.DrawString(_game.DialogFont, ">>>", indicatorPosition, Color.Red);
                 }
             }
         }

@@ -26,52 +26,5 @@ namespace BombermanMONO.LogicExtensions
             var borderSize = TileMapExtensions.WindowBorderSize;
             return new Vector2((player.Position.X * tileTextureSize.X) + borderSize, (player.Position.Y * tileTextureSize.Y) + borderSize);
         }
-
-        public static void Update(this IEntity entity, ITileMap tileMap)
-        {
-            UIHelpers.Keyboard.GetState();
-
-            bool updated = false;
-            if (UIHelpers.Keyboard.IsKeyPressed(Keys.Left))
-            {
-                entity.Move(tileMap, -1, 0);
-                updated = true;
-
-                PlayerExtensions.effects = SpriteEffects.FlipHorizontally;
-            }
-            else if (UIHelpers.Keyboard.IsKeyPressed(Keys.Right))
-            {
-                entity.Move(tileMap, 1, 0);
-                updated = true;
-
-                PlayerExtensions.effects = SpriteEffects.None;
-            }
-
-            if (UIHelpers.Keyboard.IsKeyPressed(Keys.Up))
-            {
-                entity.Move(tileMap, 0, -1);
-                updated = true;
-
-            }
-            else if (UIHelpers.Keyboard.IsKeyPressed(Keys.Down))
-            {
-                entity.Move(tileMap, 0, 1);
-                updated = true;
-            }
-            else if (UIHelpers.Keyboard.IsKeyPressed(Keys.Space))
-            {
-                tileMap.PlaceBomb(entity);
-            }
-            else if (UIHelpers.Keyboard.IsKeyPressed(Keys.K))
-            {
-                entity.RemoveLife();
-            }
-
-            if (!updated)
-            {
-                entity.Move(tileMap);
-            }
-        }
-
     }
 }

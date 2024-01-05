@@ -10,5 +10,6 @@ namespace BombermanBase
     {
         void OnMoveMade(object sender, MoveEventArgs e);
         void OnGameOver(object sender, GameOverEventArgs e);
+        void OnPlayerEnemyCollision(object sender);
     }
 }

@@ -54,6 +54,7 @@ namespace BombermanMONO
             _graphics.ApplyChanges();
 
             _game = BombermanFactory.CreateGame("GigiGigiGigi");
+            _game.AddObserver(this);
 
             base.Initialize();
         }
@@ -87,11 +88,13 @@ namespace BombermanMONO
 
             _dialogBox = new DialogBox(this)
             {
-                Text = "Hello World! Press Enter to proceed.\n" +
-                       "I will be on the next pane! " +
-                       "And wordwrap will occur, especially if there are some longer words!\n" +
-                       "Monospace fonts work best but you might not want Courier New.\n" +
-                       "In this code sample, after this dialog box finishes, you can press the O key to open a new one."
+                Text = "Welcome to BomberMan! Your goal is to kill all the enemies using bombs." +
+                       "Press [enter] to continue\n" +
+                       "Move using the arrow keys and place bombs using the [space] key!\n" +
+                       "Use your bombs wisely, as you only get a limited number!\n" +
+                       "Be careful when moving! If you touch an enemy, you will lose a life!\n" +
+                       "You can see how many lives and bombs you have left in the top left corner.\n" +
+                       "Press [enter] to start the game. Good luck!\n"
             };
 
             // Initialize the dialog box (this also calls the Show() method)
@@ -121,7 +124,9 @@ namespace BombermanMONO
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
                 Exit();
+            }
 
             _game.Update();
             _game.CheckGameOver();
@@ -131,14 +136,14 @@ namespace BombermanMONO
             if (_dialogBox.Active)
             {
                 _dialogBox.Update();
-                _game.Pause();
+                _game.PauseGame();
             }
             else
             {
-                _game.Resume();
+                _game.ResumeGame();
             }
 
-            // Debug key to show opening a new dialog box on demand
+            # region Debug key to show opening a new dialog box on demand
             if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.O))
             {
                 if (!_dialogBox.Active)
@@ -147,6 +152,7 @@ namespace BombermanMONO
                     _dialogBox.Initialize();
                 }
             }
+            #endregion
 
             base.Update(gameTime);
         }
@@ -188,12 +194,25 @@ namespace BombermanMONO
 
         public void OnMoveMade(object sender, MoveEventArgs e)
         {
-            throw new NotImplementedException();
+            return;
+            //throw new NotImplementedException();
         }
-
         public void OnGameOver(object sender, GameOverEventArgs e)
         {
-            throw new NotImplementedException();
+            string text;
+            if(e.Winner == _game.Player)
+            {
+                text = e.Winner.Username + " is thw winner! Congratulations!";
+            }
+            else
+            {
+                text = "The enemies won! Don't worry, you will get your revenge!";
+            }
+            _dialogBox.Text = "     Game over!     " + text + "\nPress enter to start a new game!";
+            _dialogBox.Show();
+        }
+        public void OnPlayerEnemyCollision(object sender)
+        {
         }
     }
 }

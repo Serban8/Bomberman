@@ -11,7 +11,8 @@ namespace BombermanBase
     {
         public IEntity CreateEntity(string username, int noOfBombs = 4, int noOfLifes = 3)
         {
-            return new Entity(username, noOfBombs, noOfLifes, (0, 0), new PlayerMoveStrategy());
+            //return new Entity(username, noOfBombs, noOfLifes, (2, 0), new PlayerMoveStrategy());
+            return new Entity(username, 999, 999, (2, 0), new PlayerMoveStrategy());
         }
     }
 }

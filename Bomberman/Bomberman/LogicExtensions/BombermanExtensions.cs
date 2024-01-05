@@ -38,11 +38,11 @@ namespace BombermanMONO.LogicExtensions
             }
             else if (UIHelpers.Keyboard.IsKeyPressed(Keys.Space))
             {
-                game.CrtLevel.PlaceBomb(game.Player);
+                game.PlaceBomb();
             }
             else if (UIHelpers.Keyboard.IsKeyPressed(Keys.K))
             {
-                game.Player.RemoveLife();
+                game.PauseEnemies();
             }
         }
 

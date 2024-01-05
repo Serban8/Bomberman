@@ -12,7 +12,6 @@ namespace BombermanBase
         ITile[,] Tiles { get; }
         (int Width, int Height) MapSize { get; }
         ITile GetTile((int X, int Y) pos);
-        void PlaceBomb(IEntity player);
         void Explode(ITile tile);
         void LoadMap(string mapFilePath);
     }

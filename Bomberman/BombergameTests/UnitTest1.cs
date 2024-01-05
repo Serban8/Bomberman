@@ -26,7 +26,8 @@ namespace BombergameTests
         public void TestPlayerMoveOutOfMap()
         {
             var game = BombermanFactory.CreateGame("Denis");
-            var map = TileMapFactory.CreateTileMap((24, 12),"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
+            //var map = TileMapFactory.CreateTileMap((24, 12),"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
+            var map = TileMapFactory.CreateTileMap((24, 12), "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
  
             //verify upper left corner
             game.Player.Move(map, -1, 0);

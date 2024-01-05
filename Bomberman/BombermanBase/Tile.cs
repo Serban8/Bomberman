@@ -31,16 +31,15 @@ namespace BombermanBase
                 _type = TileType.PathWithBomb;
             }
         }
-        //public void Explode(Player player)
+
         public void Explode()
         {
             if (Type != TileType.UnbreakableWall)
             {
                 _type = TileType.Path;
             }
-
-            //player.AddBomb();
         }
+
         public bool IsWalkable()
         {
             return Type == TileType.Path || Type == TileType.PathWithBomb;
