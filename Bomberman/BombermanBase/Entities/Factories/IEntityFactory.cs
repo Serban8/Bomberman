@@ -9,6 +9,6 @@ namespace BombermanBase
 {
     public interface IEntityFactory
     {
-        IEntity CreateEntity(string username, int noOfBombs, int noOfLifes);
+        IEntity CreateEntity(string username, (int, int) position, int? noOfBombs = null, int? noOfLifes = null);
     }
 }

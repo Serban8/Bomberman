@@ -19,8 +19,25 @@ namespace BombermanMONO.UIHelpers
 
         /// <summary>
         /// Bool that determines active state of this dialog box
+        /// Activating the dialog window also pauses the game
         /// </summary>
-        public bool Active { get; private set; }
+        private bool _active;
+        public bool Active 
+        {
+            get { return _active; }
+            private set
+            {
+                if (value == true)
+                {
+                    _game.Pause();
+                }
+                else
+                {
+                    _game.Resume();
+                }
+                _active = value;
+            }
+        }
 
         /// <summary>
         /// X,Y coordinates of this dialog box

@@ -9,10 +9,14 @@ namespace BombermanBase
 {
     public class PlayerFactory : IEntityFactory
     {
-        public IEntity CreateEntity(string username, int noOfBombs = 4, int noOfLifes = 3)
+        public IEntity CreateEntity(string username, (int, int) position, int? noOfBombs = null, int? noOfLives = null)
         {
-            //return new Entity(username, noOfBombs, noOfLifes, (2, 0), new PlayerMoveStrategy());
-            return new Entity(username, 999, 999, (2, 0), new PlayerMoveStrategy());
+            if (noOfBombs != null && noOfLives != null)
+            {
+                return new Entity(username, (int)noOfBombs, (int)noOfLives, position, new PlayerMoveStrategy());
+            }
+
+            return new Entity(username, 999, 999, position, new PlayerMoveStrategy());
         }
     }
 }

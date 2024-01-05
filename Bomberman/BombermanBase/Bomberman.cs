@@ -17,10 +17,10 @@ namespace BombermanBase
             Entity = entity;
         }
     };
-    public class GameOverEventArgs : EventArgs
+    public class LevelOverEventArgs : EventArgs
     {
         public IEntity Winner { get; set; }
-        public GameOverEventArgs(IEntity entity)
+        public LevelOverEventArgs(IEntity entity)
         {
             Winner = entity;
         }
@@ -30,9 +30,7 @@ namespace BombermanBase
     {
         public static IBomberman CreateGame(string username)
         {
-            IEntity player = new PlayerFactory().CreateEntity(username);
-            List<IEntity> enemies = new List<IEntity>() { new EnemyFactory().CreateEntity("YoloBOMB"), new EnemyFactory().CreateEntity("enemy2") };
-            Bomberman game = new Bomberman(player, enemies);
+            Bomberman game = new Bomberman(username);
 
             return game;
         }
@@ -46,7 +44,7 @@ namespace BombermanBase
 
         private IEntity _player;
         public IEntity Player { get => _player; }
-        
+
         private List<IEntity> _enemies;
         public List<IEntity> Enemies { get => _enemies; }
 
@@ -54,14 +52,12 @@ namespace BombermanBase
         private Timer bombTimer;
 
         private bool _paused = false;
-        private bool _enemiesPaused = false;
-        public bool EnemiesPaused { get => _enemiesPaused; }
         private List<IBombermanObserver> _observers;
 
-        public Bomberman(IEntity player, List<IEntity> enemies)
+        public Bomberman(string username)
         {
-            _player = player;
-            _enemies = enemies;
+            _player = new PlayerFactory().CreateEntity(username, (0, 0));
+            _enemies = new List<IEntity>();
             _levels = new List<ITileMap>();
             _observers = new List<IBombermanObserver>();
         }
@@ -72,18 +68,34 @@ namespace BombermanBase
 
             if (_levels.Count == 1)
             {
-                LoadLevel(0);
+                LoadNextLevel();
             }
         }
 
-        public void LoadLevel(int levelNo)
+        public void LoadNextLevel()
         {
-            if (levelNo < 0 || levelNo >= _levels.Count)
-                throw new ArgumentException();
+            if (_levels.Count == 0)
+            {
+                throw new Exception("No levels to load");
+            }
+
+            int levelNo;
+            if (_crtLevel == null)
+            {
+                levelNo = 0;
+            }
+            else
+            {
+                levelNo = _levels.IndexOf(_crtLevel) + 1;
+                if (levelNo >= _levels.Count)
+                {
+                    levelNo = 0;
+                }
+            }
 
             _crtLevel = _levels[levelNo];
 
-            StartEnemiesTimer();
+            ResetGame();
         }
 
         public void PlaceBomb()
@@ -91,10 +103,10 @@ namespace BombermanBase
             if (_player.NoOfBombs > 0)
             {
                 _player.RemoveBomb();
-                
+
                 ITile currentTile = _crtLevel.GetTile(_player.Position);
                 currentTile.AddBomb();
-                
+
                 //after 5 seconds, the bomb will explode
                 //on explosion, remove the bomb, notify the observers and check for collision with breakable walls or enemies
                 bombTimer = new Timer(5000);
@@ -119,22 +131,24 @@ namespace BombermanBase
             }
         }
 
-        public void CheckGameOver()
+        public void CheckLevelOver()
         {
             if (_player.NoOfLives == 0)
             {
                 NotifyGameOver(_enemies[0]);
+                PauseGame(); //maybe move this from here?
             }
             else if (_enemies.Count == 0)
             {
                 NotifyGameOver(_player);
+                PauseGame(); //maybe move this from here?
             }
         }
 
         public void ResumeGame()
         {
             _paused = false;
-            //ResumeEnemies();
+            ResumeEnemies();
         }
 
         public void PauseGame()
@@ -142,7 +156,7 @@ namespace BombermanBase
             _paused = true;
             PauseEnemies();
         }
-        
+
         private void StartEnemiesTimer()
         {
             enemyMoveTimer.Elapsed += (sender, e) =>
@@ -162,18 +176,29 @@ namespace BombermanBase
             enemyMoveTimer.Enabled = true;
         }
 
+        private void ResetGame()
+        {
+            _player.Reset(_crtLevel.PlayerSpawnPoint);
+
+            foreach (var spawnPoint in _crtLevel.EnemySpawnPoints)
+            {
+                _enemies.Add(new EnemyFactory().CreateEntity("mrEnemy", spawnPoint));
+            }
+
+            StartEnemiesTimer();
+            ResumeGame();
+        }
+
         public void PauseEnemies()
         {
             if (enemyMoveTimer.Enabled)
                 enemyMoveTimer.Stop();
-            _enemiesPaused = true;
         }
 
         private void ResumeEnemies()
         {
             if (!enemyMoveTimer.Enabled)
                 enemyMoveTimer.Start();
-            _enemiesPaused = false;
         }
 
         private void OnBombExplosion(ITile tile)
@@ -259,7 +284,7 @@ namespace BombermanBase
         {
             foreach (var observer in _observers)
             {
-                observer.OnGameOver(this, new GameOverEventArgs(entity));
+                observer.OnLevelOver(this, new LevelOverEventArgs(entity));
             }
         }
         private void NotifyPlayerEnemyCollision()

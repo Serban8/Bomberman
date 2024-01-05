@@ -25,17 +25,19 @@ namespace BombermanBase
         }
 
         private (int Width, int Height) _mapSize;
-        public (int Width, int Height) MapSize
-        {
-            get { return _mapSize; }
-        }
+        public (int Width, int Height) MapSize { get => _mapSize; }
 
-        private static Timer bombTimer;
+        private (int X, int Y) _playerSpawnPoint;
+        public (int X, int Y) PlayerSpawnPoint { get => _playerSpawnPoint; }
+
+        private List<(int X, int Y)> _enemySpawnPoints;
+        public List<(int X, int Y)> EnemySpawnPoints { get => _enemySpawnPoints; }
 
         public TileMap((int Width, int Height) mapSize, string mapFilePath)
         {
             _mapSize = mapSize;
             _tiles = new Tile[mapSize.Width, mapSize.Height];
+            _enemySpawnPoints = new List<(int X, int Y)>();
             LoadMap(mapFilePath);
         }
 
@@ -66,6 +68,11 @@ namespace BombermanBase
             }
         }
 
+        /// <summary>
+        /// Loads a map from a txt file. The map is a grid of characters, where each character represents a tile.
+        /// The tiles are encoded as follows: p = path, u = unbreakable wall, b = breakable wall, s = spawn point, e = enemy spawn point
+        /// </summary>
+        /// <param name="mapFilePath"></param>
         public void LoadMap(string mapFilePath)
         {
             string[] lines = File.ReadAllLines(mapFilePath);
@@ -96,6 +103,16 @@ namespace BombermanBase
                     {
                         Tiles[x, y] = new Tile((x, y), TileType.BreakableWall);
                     }
+                    else if (line[x].ToString() == "s")
+                    {
+                        Tiles[x, y] = new Tile((x, y), TileType.Path);
+                        _playerSpawnPoint = (x, y);
+                    }
+                    else if (line[x].ToString() == "e")
+                    {
+                        _enemySpawnPoints.Add((x, y));
+                        Tiles[x, y] = new Tile((x, y), TileType.Path);
+                    }
                     else
                     {
                         //throw new Exception("Invalid map format");
@@ -103,8 +120,6 @@ namespace BombermanBase
                     }
                 }
             }
-
-            //Console.WriteLine("Map loaded " + MapSize.Width.ToString() + " " + MapSize.Height.ToString());
         }
     }
 }

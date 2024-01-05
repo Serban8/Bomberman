@@ -129,19 +129,10 @@ namespace BombermanMONO
             }
 
             _game.Update();
-            _game.CheckGameOver();
+            _game.CheckLevelOver();
 
             UpdatePlayerInfoBoard();
-
-            if (_dialogBox.Active)
-            {
-                _dialogBox.Update();
-                _game.PauseGame();
-            }
-            else
-            {
-                _game.ResumeGame();
-            }
+            _dialogBox.Update();
 
             # region Debug key to show opening a new dialog box on demand
             if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.O))
@@ -192,24 +183,35 @@ namespace BombermanMONO
             base.Draw(gameTime);
         }
 
+        public void Pause() 
+        {
+            _game.PauseGame();
+        }
+
+        public void Resume()
+        {
+            _game.ResumeGame();
+        }
+
         public void OnMoveMade(object sender, MoveEventArgs e)
         {
             return;
             //throw new NotImplementedException();
         }
-        public void OnGameOver(object sender, GameOverEventArgs e)
+        public void OnLevelOver(object sender, LevelOverEventArgs e)
         {
             string text;
             if(e.Winner == _game.Player)
             {
-                text = e.Winner.Username + " is thw winner! Congratulations!";
+                text = e.Winner.Username + " is the winner! Congratulations!\n";
             }
             else
             {
-                text = "The enemies won! Don't worry, you will get your revenge!";
+                text = "The enemies won! Don't worry, you will get your revenge!\n";
             }
-            _dialogBox.Text = "     Game over!     " + text + "\nPress enter to start a new game!";
-            _dialogBox.Show();
+            text += "Press enter to start a new level!";
+            _dialogBox.Initialize(text);
+            _game.LoadNextLevel();
         }
         public void OnPlayerEnemyCollision(object sender)
         {

@@ -11,8 +11,8 @@ namespace BombergameTests
         {
             var game = BombermanFactory.CreateGame("Denis");
 
-            IEntity player = new PlayerFactory().CreateEntity("Denis");
-            List<IEntity> enemies = new List<IEntity>() { new EnemyFactory().CreateEntity("YoloBOMB"), new EnemyFactory().CreateEntity("enemy2") };
+            IEntity player = new PlayerFactory().CreateEntity("Denis", (0,0));
+            List<IEntity> enemies = new List<IEntity>() { new EnemyFactory().CreateEntity("YoloBOMB", (0, 0)), new EnemyFactory().CreateEntity("enemy2", (0, 0)) };
 
             Assert.AreEqual(player,game.Player);
             

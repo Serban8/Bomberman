@@ -20,7 +20,7 @@ namespace BombermanBase
         public int NoOfLives { get => _noOfLives; }
 
         private (int, int) _position;
-        public (int X, int Y) Position { get => _position; }
+        public (int X, int Y) Position { get => _position; set => _position = value; }
 
         private bool _immortal = false;
         public bool Immortal { get => _immortal; set { _immortal = value; } }
@@ -49,6 +49,13 @@ namespace BombermanBase
             return this._username == otherPlayer.Username && this._noOfBombs == otherPlayer.NoOfBombs && this._noOfLives == otherPlayer.NoOfLives
                 && this._position == otherPlayer.Position;
 
+        }
+
+        public void Reset((int, int) newPos)
+        {
+            _noOfBombs = EntityDefaults.NoOfBombs;
+            _noOfLives = EntityDefaults.NoOfLives;
+            _position = newPos;
         }
 
         public void RemoveBomb()
