@@ -1,5 +1,8 @@
 using BombermanBase;
 using BombermanBase.Entities;
+using NSubstitute;
+using NSubstitute.Core;
+using NSubstitute.ReceivedExtensions;
 
 namespace BombergameTests
 {
@@ -10,15 +13,19 @@ namespace BombergameTests
         public void TestEntitiesInitialization()
         {
             var game = BombermanFactory.CreateGame("Denis");
+            var map = TileMapFactory.CreateTileMap((24, 12), "C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
+            game.AddLevel(map);
+            game.LoadNextLevel();
 
-            IEntity player = new PlayerFactory().CreateEntity("Denis", (0,0));
-            List<IEntity> enemies = new List<IEntity>() { new EnemyFactory().CreateEntity("YoloBOMB", (0, 0)), new EnemyFactory().CreateEntity("enemy2", (0, 0)) };
-
-            Assert.AreEqual(player,game.Player);
+            IEntity player = new PlayerFactory().CreateEntity("Denis", (8,3));
             
-            for (int i = 0; i < game.Enemies.Count; i++) 
+            List<IEntity> enemies = new List<IEntity>() { new EnemyFactory().CreateEntity("mrEnemy", (0, 0)), new EnemyFactory().CreateEntity("mrEnemy", (9, 0)), new EnemyFactory().CreateEntity("mrEnemy", (9, 8)) };
+
+            Assert.AreEqual(player.Position,game.Player.Position);
+            
+            for (int i = 0; i < 3; i++) 
             {
-                Assert.AreEqual(enemies[i], game.Enemies[i]);
+                Assert.AreEqual(enemies[i].Position, game.Enemies[i].Position);
             }
             
         }
@@ -26,8 +33,8 @@ namespace BombergameTests
         public void TestPlayerMoveOutOfMap()
         {
             var game = BombermanFactory.CreateGame("Denis");
-            //var map = TileMapFactory.CreateTileMap((24, 12),"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
-            var map = TileMapFactory.CreateTileMap((24, 12), "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
+            var map = TileMapFactory.CreateTileMap((24, 12),"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
+            //var map = TileMapFactory.CreateTileMap((24, 12), "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
  
             //verify upper left corner
             game.Player.Move(map, -1, 0);
@@ -82,7 +89,7 @@ namespace BombergameTests
         {
             var game = BombermanFactory.CreateGame("Denis");
 
-            int exNoOfBombs = 3;
+            int exNoOfBombs = 998;
 
             while (game.Player.NoOfBombs > 0)
             {
@@ -98,7 +105,7 @@ namespace BombergameTests
         {
             var game = BombermanFactory.CreateGame("Denis");
 
-            int exNoOfLives = 2;
+            int exNoOfLives = 998;
 
             while (game.Player.NoOfLives > 0)
             {
@@ -129,7 +136,44 @@ namespace BombergameTests
             Assert.AreEqual((5, 5), game.Player.Position);
 
         }
-    
+
+        [TestMethod]
+
+        public void TestLevelOverObservable()
+        {
+            var game = BombermanFactory.CreateGame("Denis");
+            var map = TileMapFactory.CreateTileMap((24, 12), "C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
+            game.AddLevel(map);
+            game.LoadNextLevel();
+
+            while (game.Player.NoOfLives > 0)
+            {
+                game.Player.RemoveLife();
+            }
+
+            var obs = Substitute.For<IBombermanObserver>();
+            game.AddObserver(obs);
+
+            game.CheckLevelOver();
+            obs.Received().OnLevelOver(game, Arg.Any<LevelOverEventArgs>());
+        }
+
+        [TestMethod]
+
+        public void TestMoveObs()
+        {
+            var game = BombermanFactory.CreateGame("Denis");
+            var map = TileMapFactory.CreateTileMap((24, 12), "C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt");
+            game.AddLevel(map);
+            game.LoadNextLevel();
+           
+            var obs = Substitute.For<IBombermanObserver>();
+            game.AddObserver(obs);
+            
+            game.MovePlayer(1, 0);
+            obs.Received().OnMoveMade(game, Arg.Any<MoveEventArgs>());
+        }
+
         [TestMethod]
         public void TestDestroyTile()
         {

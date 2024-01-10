@@ -73,7 +73,7 @@ namespace BombermanBase
 
         public void RemoveLife()
         {
-            if (!_immortal)
+            if (!_immortal && _noOfLives > 0)
                 _noOfLives--;
         }
 
