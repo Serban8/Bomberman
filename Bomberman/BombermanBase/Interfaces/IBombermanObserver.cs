@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombermanBase.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,10 @@ namespace BombermanBase
 {
     public interface IBombermanObserver
     {
-        void OnMoveMade(object sender, MoveEventArgs e);
+        void OnPlayerMoved(object sender, MoveEventArgs e);
+        void OnBombExplosion(object sender);
         void OnLevelOver(object sender, LevelOverEventArgs e);
-        void OnPlayerEnemyCollision(object sender);
+        void OnPlayerLoseLife(object sender);
+        void OnEnemyDied(object sender, IEntity enemy);
     }
 }

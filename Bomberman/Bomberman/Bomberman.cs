@@ -5,8 +5,13 @@ using BombermanBase;
 using BombermanMONO.LogicExtensions;
 using System.Timers;
 using System.Collections.Generic;
-using System;
 using BombermanMONO.UIHelpers;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
+using System.Threading;
+
+using Timer = System.Timers.Timer;
+using BombermanBase.Entities;
 
 namespace BombermanMONO
 {
@@ -17,6 +22,7 @@ namespace BombermanMONO
 
         private readonly Vector2 _windowSize;
         private Texture2D _backgroundTexture;
+        private Song _backgroundSong;
 
         private readonly int _windowBorderSize;
         public Vector2 CenterScreen
@@ -64,6 +70,14 @@ namespace BombermanMONO
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _backgroundTexture = Content.Load<Texture2D>("Backgrounds/DarkGrayWithStars");
+            _backgroundSong = Content.Load<Song>("Sounds/background");
+            MediaPlayer.Play(_backgroundSong);
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Volume = 0.2f;
+            //MediaPlayer.MediaStateChanged += (sender, e) =>
+            //{
+            //    MediaPlayer.Volume = 0.1f;
+            //};
 
             TileExtensions.pathTexture = Content.Load<Texture2D>("Paths/path-small-rounded-v2");
             TileExtensions.unbreakableWallTexture = Content.Load<Texture2D>("Paths/wall");
@@ -71,6 +85,12 @@ namespace BombermanMONO
             TileExtensions.pathWithBombTexture = Content.Load<Texture2D>("paths/path-with-bomb");
 
             PlayerExtensions.playerTexture = Content.Load<Texture2D>("Sprites/player");
+            PlayerExtensions.footstepSoundInstance = Content.Load<SoundEffect>("Sounds/footstep").CreateInstance();
+            PlayerExtensions.footstepSoundInstance.Volume = 0.3f;
+            PlayerExtensions.footstepSoundInstance.IsLooped = true;
+
+            PlayerExtensions.explosionSoundInstance = Content.Load<SoundEffect>("Sounds/explosion").CreateInstance();
+            PlayerExtensions.explosionSoundInstance.Volume = 0.3f;
 
             EnemyExtensions.EnemyTexture = Content.Load<Texture2D>("Sprites/enemy2");
 
@@ -89,7 +109,7 @@ namespace BombermanMONO
             _dialogBox = new DialogBox(this)
             {
                 Text = "Welcome to BomberMan! Your goal is to kill all the enemies using bombs." +
-                       "Press [enter] to continue\n" +
+                       "Press [enter] to continue or press [x] to skip this dialog\n" +
                        "Move using the arrow keys and place bombs using the [space] key!\n" +
                        "Use your bombs wisely, as you only get a limited number!\n" +
                        "Be careful when moving! If you touch an enemy, you will lose a life!\n" +
@@ -105,12 +125,9 @@ namespace BombermanMONO
         {
             List<string> levels = new()
             {
-                //"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
-                //"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
-                //"C:\\Users\\Legion\\Desktop\\Portofolii\\an3\\IS\\Bomberman repo\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
-                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level1.txt",
-                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level2.txt" ,
-                "C:\\Users\\mihai\\OneDrive\\Materiale cursuri\\Anul3\\IS\\proiect\\Bomberman\\Bomberman\\Bomberman\\Content\\Level\\Level3.txt"
+                Content.RootDirectory + "\\Level\\Level1.txt",
+                Content.RootDirectory + "\\Level\\Level2.txt" ,
+                Content.RootDirectory + "\\Level\\Level3.txt"
             };
 
             //load the levels
@@ -125,7 +142,11 @@ namespace BombermanMONO
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
-                Exit();
+                if (!_dialogBox.Active)
+                {
+                    _dialogBox = new DialogBox(this) { Text = "The game is paused! Press enter to resume or simply close the window to quit." };
+                    _dialogBox.Initialize();
+                }
             }
 
             _game.Update();
@@ -142,6 +163,13 @@ namespace BombermanMONO
                     _dialogBox = new DialogBox(this) { Text = "New dialog box!" };
                     _dialogBox.Initialize();
                 }
+            }
+            #endregion
+
+            #region Debug key to stop enemies
+            if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.P))
+            {
+                _game.PauseEnemies();
             }
             #endregion
 
@@ -183,25 +211,40 @@ namespace BombermanMONO
             base.Draw(gameTime);
         }
 
-        public void Pause() 
+        public void Pause()
         {
             _game.PauseGame();
+            MediaPlayer.Volume = 0.2f;
         }
 
         public void Resume()
         {
             _game.ResumeGame();
+            MediaPlayer.Volume = 0.1f;
         }
 
-        public void OnMoveMade(object sender, MoveEventArgs e)
+        public void OnPlayerMoved(object sender, MoveEventArgs e)
         {
-            return;
-            //throw new NotImplementedException();
+            if (e.Entity == _game.Player)
+            {
+                PlayerExtensions.footstepSoundInstance.Play();
+                Timer timer = new Timer(500);
+                timer.Elapsed += (sender, e) =>
+                {
+                    PlayerExtensions.footstepSoundInstance.Pause();
+                };
+                timer.AutoReset = false;
+                timer.Start();
+            }
+        }
+        public void OnBombExplosion(object sender)
+        {
+            PlayerExtensions.explosionSoundInstance.Play();
         }
         public void OnLevelOver(object sender, LevelOverEventArgs e)
         {
             string text;
-            if(e.Winner == _game.Player)
+            if (e.Winner == _game.Player)
             {
                 text = e.Winner.Username + " is the winner! Congratulations!\n";
             }
@@ -212,9 +255,67 @@ namespace BombermanMONO
             text += "Press enter to start a new level!";
             _dialogBox.Initialize(text);
             _game.LoadNextLevel();
+            Pause();
         }
-        public void OnPlayerEnemyCollision(object sender)
+        public void OnPlayerLoseLife(object sender)
         {
+            //alternate between white and red player tint 10 times (blinks)
+            var blinkThread = new Thread(() =>
+            {
+                int maxBlinks = 10;
+                int crtBlinks = 0;
+                while (crtBlinks < maxBlinks)
+                {
+                    if (crtBlinks % 2 == 0)
+                    {
+                        PlayerExtensions.playerTintColor = Color.White;
+                    }
+                    else
+                    {
+                        PlayerExtensions.playerTintColor = Color.Red;
+                    }
+                    crtBlinks++;
+                    Thread.Sleep(150);
+                }
+                //reset the tint
+                PlayerExtensions.playerTintColor = Color.White;
+            });
+
+            blinkThread.Start();
+
+        }
+        public void OnEnemyDied(object sender, IEntity enemy)
+        {
+            Thread thread = new Thread(() =>
+            {
+                Color tint = Color.White;
+                Thread blinkThread = new Thread(() =>
+                {
+                    int maxBlinks = 10;
+                    int crtBlinks = 0;
+                    while (crtBlinks < maxBlinks)
+                    {
+                        if (crtBlinks % 2 == 0)
+                        {
+                            tint = Color.White;
+                        }
+                        else
+                        {
+                            tint = Color.Red;
+                        }
+                        crtBlinks++;
+                        Thread.Sleep(150);
+                    }
+                    //reset the tint
+                    tint = Color.White;
+                });
+                blinkThread.Start();
+                while (blinkThread.IsAlive)
+                {
+                    //enemy.Draw(spriteBatch, tint);
+                }
+            });
+            thread.Start();
         }
     }
 }

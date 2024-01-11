@@ -18,13 +18,13 @@ namespace BombermanMONO.LogicExtensions
             {
                 game.MovePlayer(-1, 0);
 
-                PlayerExtensions.effects = SpriteEffects.FlipHorizontally;
+                PlayerExtensions.effects = SpriteEffects.None;
             }
             else if (UIHelpers.Keyboard.IsKeyPressed(Keys.Right))
             {
                 game.MovePlayer(1, 0);
 
-                PlayerExtensions.effects = SpriteEffects.None;
+                PlayerExtensions.effects = SpriteEffects.FlipHorizontally;
             }
 
             if (UIHelpers.Keyboard.IsKeyPressed(Keys.Up))

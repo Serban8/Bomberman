@@ -1,6 +1,7 @@
 ﻿using BombermanBase;
 using BombermanBase.Entities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Runtime.CompilerServices;
@@ -14,10 +15,13 @@ namespace BombermanMONO.LogicExtensions
     public static class PlayerExtensions
     {
         public static Texture2D playerTexture;
+        public static Color playerTintColor = Color.White;
         public static SpriteEffects effects;
+        public static SoundEffectInstance footstepSoundInstance;
+        public static SoundEffectInstance explosionSoundInstance;
         public static void Draw(Vector2 screenCoords, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(playerTexture, screenCoords, null, Color.White, 0f, Vector2.Zero, 1f, effects, 0);
+            spriteBatch.Draw(playerTexture, screenCoords, null, playerTintColor, 0f, Vector2.Zero, 1f, effects, 0);
         }
         public static Vector2 GetScreenCoords(this IEntity player)
         {

@@ -75,6 +75,7 @@ namespace BombermanBase
         /// <param name="mapFilePath"></param>
         public void LoadMap(string mapFilePath)
         {
+            //modify to use ITile and CreateTile
             string[] lines = File.ReadAllLines(mapFilePath);
 
             int width = MapSize.Width;
@@ -93,30 +94,30 @@ namespace BombermanBase
                 {
                     if (line[x].ToString() == "p")
                     {
-                        Tiles[x, y] = new Tile((x, y), TileType.Path);
+                        Tiles[x, y] = TileFactory.CreateTile((x, y), TileType.Path);
                     }
                     else if (line[x].ToString() == "u")
                     {
-                        Tiles[x, y] = new Tile((x, y), TileType.UnbreakableWall);
+                        Tiles[x, y] = TileFactory.CreateTile((x, y), TileType.UnbreakableWall);
                     }
                     else if (line[x].ToString() == "b")
                     {
-                        Tiles[x, y] = new Tile((x, y), TileType.BreakableWall);
+                        Tiles[x, y] = TileFactory.CreateTile((x, y), TileType.BreakableWall);
                     }
                     else if (line[x].ToString() == "s")
                     {
-                        Tiles[x, y] = new Tile((x, y), TileType.Path);
+                        Tiles[x, y] = TileFactory.CreateTile((x, y), TileType.Path);
                         _playerSpawnPoint = (x, y);
                     }
                     else if (line[x].ToString() == "e")
                     {
                         _enemySpawnPoints.Add((x, y));
-                        Tiles[x, y] = new Tile((x, y), TileType.Path);
+                        Tiles[x, y] = TileFactory.CreateTile((x, y), TileType.Path);
                     }
                     else
                     {
                         //throw new Exception("Invalid map format");
-                        Tiles[x, y] = new Tile((x, y), TileType.Path);
+                        Tiles[x, y] = TileFactory.CreateTile((x, y), TileType.Path);
                     }
                 }
             }

@@ -12,7 +12,7 @@ namespace BombermanBase
         {
             try
             {
-                ITile nextTile = tileMap.GetTile((crtPos.X + xMove, crtPos.Y + yMove));
+                ITile nextTile = tileMap.GetTile((crtPos.X + xMove, crtPos.Y + yMove)); //create method in ITileMap
                 if (nextTile.IsWalkable())
                     return (crtPos.X + xMove, crtPos.Y + yMove);
             }

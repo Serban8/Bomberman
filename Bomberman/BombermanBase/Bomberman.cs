@@ -126,7 +126,7 @@ namespace BombermanBase
             if (!_paused)
             {
                 _player.Move(_crtLevel, x, y);
-                NotifyMoveMade(_player);
+                NotifyPlayerMoved(_player);
                 CheckPlayerEnemyCollision();
             }
         }
@@ -167,7 +167,7 @@ namespace BombermanBase
 
                     if (!CheckEnemyEnemyCollision(enemy))
                     {
-                        NotifyMoveMade(enemy);
+                        NotifyPlayerMoved(enemy);
                         CheckPlayerEnemyCollision();
                     }
                 }
@@ -180,9 +180,11 @@ namespace BombermanBase
         {
             _player.Reset(_crtLevel.PlayerSpawnPoint);
 
+            var ef = new EnemyFactory();
+            _enemies.Clear();
             foreach (var spawnPoint in _crtLevel.EnemySpawnPoints)
             {
-                _enemies.Add(new EnemyFactory().CreateEntity("mrEnemy", spawnPoint));
+                _enemies.Add(ef.CreateEntity("mrEnemy", spawnPoint));
             }
 
             StartEnemiesTimer();
@@ -203,6 +205,7 @@ namespace BombermanBase
 
         private void OnBombExplosion(ITile tile)
         {
+            NotifyBombExplosion();
             //destroy the bomb and detect collision with breakable walls
             _crtLevel.Explode(tile);
 
@@ -222,9 +225,14 @@ namespace BombermanBase
                         if (enemy.Position == newPosition)
                         {
                             _enemies.Remove(enemy);
-                            //NotifyEnemyKilled(enemy);
+                            NotifyEnemyDied(enemy);
                             break;
                         }
+                    }
+                    if (_player.Position == newPosition)
+                    {
+                        _player.RemoveLife();
+                        NotifyPlayerLoseLife();
                     }
                 }
             }
@@ -247,16 +255,16 @@ namespace BombermanBase
         {
             foreach (var enemy in _enemies)
             {
-                if (_player.Position == enemy.Position)
+                if (_player.Position == enemy.Position && !_player.Immortal)
                 {
                     _player.RemoveLife();
-                    NotifyPlayerEnemyCollision();
+                    NotifyPlayerLoseLife();
 
                     //give player 1.5 seconds to move away from the enemy: pause the enemies and make them immortal
                     PauseEnemies();
                     _player.Immortal = true;
                     Timer resumeEnemiesTimer = new Timer(1500);
-                    resumeEnemiesTimer.Elapsed += (sender, e) => { ResumeEnemies(); _player.Immortal = false; };
+                    resumeEnemiesTimer.Elapsed += (sender, e) => { if (!_paused) ResumeEnemies(); _player.Immortal = false; };
                     resumeEnemiesTimer.AutoReset = false;
                     resumeEnemiesTimer.Enabled = true;
                 }
@@ -273,11 +281,18 @@ namespace BombermanBase
             _observers.Remove(observer);
         }
 
-        private void NotifyMoveMade(IEntity entity)
+        private void NotifyBombExplosion()
         {
             foreach (var observer in _observers)
             {
-                observer.OnMoveMade(this, new MoveEventArgs(entity));
+                observer.OnBombExplosion(this);
+            }
+        }
+        private void NotifyPlayerMoved(IEntity entity)
+        {
+            foreach (var observer in _observers)
+            {
+                observer.OnPlayerMoved(this, new MoveEventArgs(entity));
             }
         }
         private void NotifyGameOver(IEntity entity)
@@ -287,11 +302,18 @@ namespace BombermanBase
                 observer.OnLevelOver(this, new LevelOverEventArgs(entity));
             }
         }
-        private void NotifyPlayerEnemyCollision()
+        private void NotifyPlayerLoseLife()
         {
             foreach (var observer in _observers)
             {
-                observer.OnPlayerEnemyCollision(this);
+                observer.OnPlayerLoseLife(this);
+            }
+        }
+        private void NotifyEnemyDied(IEntity entity)
+        {
+            foreach (var observer in _observers)
+            {
+                observer.OnEnemyDied(this, entity);
             }
         }
         #endregion
