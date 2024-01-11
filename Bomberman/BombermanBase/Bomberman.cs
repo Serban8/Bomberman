@@ -52,6 +52,7 @@ namespace BombermanBase
         private Timer bombTimer;
 
         private bool _paused = false;
+        private int _bombsUnexploaded = 0;
         private List<IBombermanObserver> _observers;
 
         public Bomberman(string username)
@@ -103,6 +104,7 @@ namespace BombermanBase
             if (_player.NoOfBombs > 0)
             {
                 _player.RemoveBomb();
+                _bombsUnexploaded++;
 
                 ITile currentTile = _crtLevel.GetTile(_player.Position);
                 currentTile.AddBomb();
@@ -133,7 +135,7 @@ namespace BombermanBase
 
         public void CheckLevelOver()
         {
-            if (_player.NoOfLives == 0)
+            if (_player.NoOfLives == 0 || (_player.NoOfBombs == 0 && _enemies.Count != 0 && _bombsUnexploaded == 0))
             {
                 NotifyGameOver(_enemies[0]);
                 PauseGame(); //maybe move this from here?
@@ -236,6 +238,7 @@ namespace BombermanBase
                     }
                 }
             }
+            _bombsUnexploaded--;
             ResumeEnemies();
         }
 
