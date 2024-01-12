@@ -101,7 +101,7 @@ namespace BombermanBase
 
         public void PlaceBomb()
         {
-            if (_player.NoOfBombs > 0)
+            if (_player.NoOfBombs > 0 && !_paused)
             {
                 _player.RemoveBomb();
                 _bombsUnexploaded++;
