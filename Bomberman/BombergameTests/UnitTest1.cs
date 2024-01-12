@@ -171,7 +171,7 @@ namespace BombergameTests
             game.AddObserver(obs);
             
             game.MovePlayer(1, 0);
-            obs.Received().OnMoveMade(game, Arg.Any<MoveEventArgs>());
+            obs.Received().OnPlayerMoved(game, Arg.Any<MoveEventArgs>());
         }
 
         [TestMethod]
